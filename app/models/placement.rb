@@ -1,11 +1,21 @@
+Position = Struct.new(:x, :y) do
+  include Comparable
+  def <=>(other)
+    if Position === other
+      [x, y] <=> [other.x, other.y]
+    end
+  end
+end
+
 class Placement
-  def initialize(grid, dictionary)
+  def initialize(board, dictionary)
+    @board = board
     @dictionary = dictionary
     @tiles = []
   end
 
-  def place_tile(letter, x, y)
-    @tiles << PlacedTile.new(letter, Position.new(x, y))
+  def place_tile(letter, position)
+    @tiles << PlacedTile.new(letter, position)
   end
 
   def valid?
@@ -15,20 +25,19 @@ class Placement
     return false unless sorted_positions.include?(CENTRE)
     return false if any_gaps?
     return false unless valid_word?
+    return false if any_on_occupied_squares?
     @tiles.size > 1
   end
 
   private
 
-  Position = Struct.new(:x, :y) do
-    include Comparable
-    def <=>(other)
-      [x, y] <=> [other.x, other.y]
-    end
-  end
   CENTRE = Position.new(7, 7)
 
   PlacedTile = Struct.new(:letter, :position)
+
+  def any_on_occupied_squares?
+    @tiles.map(&:position).any? { |pos| @board.letter_at(pos)}
+  end
 
   def valid_word?
     word = tiles_sorted_by_position.map(&:letter).join('')
