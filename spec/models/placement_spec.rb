@@ -1,13 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Placement do
-  let(:board) { double("Board") }
   let(:dictionary) { Set.new(%w(IT TO TON)) }
-  let(:placement) { Placement.new(board, dictionary) }
-
-  before do
-    allow(board).to receive(:letter_at).with(kind_of(Position)).and_return(nil)
-  end
+  let(:board) { Board.new(dictionary) }
+  let(:placement) { Placement.new(board) }
 
   context "on an empty board" do
 
@@ -60,14 +56,26 @@ RSpec.describe Placement do
   end
 
   context "on a non-empty board" do
+    before do
+      board.add_letter("T", Position.new(7, 7))
+      board.add_letter("O", Position.new(8, 7))
+    end
+
     it "rejects tiles placed on occupied squares" do
-      expect(board).to receive(:letter_at).with(Position.new(7, 7)).and_return('T')
       placement.place_tile("T", Position.new(7, 7))
-      placement.place_tile("O", Position.new(8, 7))
-      placement.place_tile("N", Position.new(9, 7))
       expect(placement).to_not be_valid
     end
 
+    it "allows tiles which extend existing words" do
+      placement.place_tile("N", Position.new(9, 7))
+      expect(placement).to be_valid
+    end
+
+    it "adding a tile doesn't modify the original board" do
+      position = Position.new(9, 7)
+      placement.place_tile("N", position)
+      expect(board.letter_at(position)).to be_nil
+    end
   end
 
 end

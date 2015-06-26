@@ -1,16 +1,6 @@
-Position = Struct.new(:x, :y) do
-  include Comparable
-  def <=>(other)
-    if Position === other
-      [x, y] <=> [other.x, other.y]
-    end
-  end
-end
-
 class Placement
-  def initialize(board, dictionary)
+  def initialize(board)
     @board = board
-    @dictionary = dictionary
     @tiles = []
   end
 
@@ -20,13 +10,16 @@ class Placement
 
   def valid?
     return false if @tiles.empty?
+    return false if any_on_occupied_squares?
     return false if duplicate_positions?
     return false unless (all_on_same_row? || all_on_same_column?)
-    return false unless sorted_positions.include?(CENTRE)
     return false if any_gaps?
-    return false unless valid_word?
-    return false if any_on_occupied_squares?
-    @tiles.size > 1
+    return false unless creates_valid_words?
+    if @board.empty?
+      return false unless sorted_positions.include?(CENTRE)
+      return @tiles.size > 1
+    end
+    true
   end
 
   private
@@ -39,9 +32,12 @@ class Placement
     @tiles.map(&:position).any? { |pos| @board.letter_at(pos)}
   end
 
-  def valid_word?
-    word = tiles_sorted_by_position.map(&:letter).join('')
-    @dictionary.include?(word)
+  def creates_valid_words?
+    new_board = @board.dup
+    @tiles.each do |tile|
+      new_board.add_letter(tile.letter, tile.position)
+    end
+    new_board.invalid_words.empty?
   end
 
   def any_gaps?
