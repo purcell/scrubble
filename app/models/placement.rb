@@ -9,17 +9,17 @@ class Placement
   end
 
   def valid?
-    return false if @tiles.empty?
-    return false if any_on_occupied_squares?
-    return false if duplicate_positions?
-    return false unless (all_on_same_row? || all_on_same_column?)
-    return false if any_gaps?
-    return false unless creates_valid_words?
-    if @board.empty?
-      return false unless sorted_positions.include?(CENTRE)
-      return @tiles.size > 1
-    end
-    true
+    @tiles.any? &&
+      all_on_free_squares? &&
+      distinct_positions? &&
+      (all_on_same_row? || all_on_same_column?) &&
+      no_gaps? &&
+      creates_valid_words? &&
+      if @board.empty?
+        sorted_positions.include?(CENTRE) && @tiles.size > 1
+      else
+        true
+      end
   end
 
   private
@@ -28,8 +28,8 @@ class Placement
 
   PlacedTile = Struct.new(:letter, :position)
 
-  def any_on_occupied_squares?
-    @tiles.map(&:position).any? { |pos| @board.letter_at(pos)}
+  def all_on_free_squares?
+    @tiles.map(&:position).all? { |pos| @board.letter_at(pos).nil?}
   end
 
   def creates_valid_words?
@@ -40,15 +40,15 @@ class Placement
     new_board.invalid_words.empty?
   end
 
-  def any_gaps?
+  def no_gaps?
     positions = sorted_positions
-    (positions.map(&:x).uniq != (positions.first.x..positions.last.x).to_a) ||
-      (positions.map(&:y).uniq != (positions.first.y..positions.last.y).to_a)
+    (positions.map(&:x).uniq == (positions.first.x..positions.last.x).to_a) &&
+      (positions.map(&:y).uniq == (positions.first.y..positions.last.y).to_a)
   end
 
-  def duplicate_positions?
+  def distinct_positions?
     positions = sorted_positions
-    positions.uniq != sorted_positions
+    positions.uniq == sorted_positions
   end
 
   def all_on_same_row?
