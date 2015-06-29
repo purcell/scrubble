@@ -18,7 +18,7 @@ class Board
   end
 
   def invalid_words
-    all_words.select(&method(:bad_word?))
+    all_words.select(&method(:bad_word?)) + stranded_letters
   end
 
   def valid_words
@@ -26,6 +26,21 @@ class Board
   end
 
   private
+
+  def stranded_letters
+    letter_positions.inject([]) do |stranded, position|
+      letter = letter_at(position)
+      stranded << letter if letter && !has_neighbours?(position)
+      stranded
+    end
+  end
+
+  def has_neighbours?(position)
+    letter_at(position.left) ||
+      letter_at(position.right) ||
+      letter_at(position.up) ||
+      letter_at(position.down)
+  end
 
   def initialize_copy(other)
     super
@@ -36,7 +51,7 @@ class Board
     letter_positions.map do |start_position|
       rightwards = read_word_from(start_position, :right) unless letter_at(start_position.left)
       downwards = read_word_from(start_position, :down) unless letter_at(start_position.up)
-      [rightwards, downwards].compact.select { |word| word.size > 1 }
+      [rightwards, downwards].compact.reject { |word| word.size == 1 }
     end.flatten
   end
 

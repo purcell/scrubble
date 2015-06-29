@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Placement do
-  let(:dictionary) { Set.new(%w(IT TO TON)) }
+  let(:dictionary) { Set.new(%w(IT TO TON ETON)) }
   let(:board) { Board.new(dictionary) }
   let(:placement) { Placement.new(board) }
 
@@ -68,6 +68,12 @@ RSpec.describe Placement do
 
     it "allows tiles which extend existing words" do
       placement.place_tile("N", Position.new(9, 7))
+      expect(placement).to be_valid
+    end
+
+    it "allows tiles which extend existing words at both ends" do
+      placement.place_tile("N", Position.new(9, 7))
+      placement.place_tile("E", Position.new(6, 7))
       expect(placement).to be_valid
     end
 

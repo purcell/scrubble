@@ -13,7 +13,6 @@ class Placement
       all_on_free_squares? &&
       distinct_positions? &&
       (all_on_same_row? || all_on_same_column?) &&
-      no_gaps? &&
       creates_valid_words? &&
       if @board.empty?
         sorted_positions.include?(CENTRE) && @tiles.size > 1
@@ -38,12 +37,6 @@ class Placement
       new_board.add_letter(tile.letter, tile.position)
     end
     new_board.invalid_words.empty?
-  end
-
-  def no_gaps?
-    positions = sorted_positions
-    (positions.map(&:x).uniq == (positions.first.x..positions.last.x).to_a) &&
-      (positions.map(&:y).uniq == (positions.first.y..positions.last.y).to_a)
   end
 
   def distinct_positions?

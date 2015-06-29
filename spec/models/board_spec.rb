@@ -40,10 +40,10 @@ RSpec.describe Board do
   end
 
   context "when there's a single letter" do
-    it "doesn't report that word as valid or invalid" do
+    it "reports that word as invalid" do
       board.add_letter("A", Position.new(7, 7))
-      expect(board.invalid_words).to be_empty
       expect(board.valid_words).to be_empty
+      expect(board.invalid_words).to eq(["A"])
     end
   end
 
@@ -79,4 +79,6 @@ RSpec.describe Board do
       expect(board.invalid_words).to be_empty
     end
   end
+
+
 end
