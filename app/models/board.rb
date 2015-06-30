@@ -28,16 +28,32 @@ class Board
   end
 
   def word_multiplier_at(position)
-    if double_word?(position)
-      2
-    elsif triple_word?(position)
-      3
-    else
-      1
+    case LAYOUT[position.y - 1][position.x - 1]
+    when 'D' then 2
+    when 'T' then 3
+    else 1
     end
   end
 
   private
+
+  LAYOUT = [
+    "T..d...T...d..T",
+    ".D...t...t...D.",
+    "..D...d.d...D..",
+    "d..D...d...D..d",
+    "....D.....D....",
+    ".t...t...t...t.",
+    "..d...d.d...d..",
+    "T..d...D...d..T",
+    "..d...d.d...d..",
+    ".t...t...t...t.",
+    "....D.....D....",
+    "d..D...d...D..d",
+    "..D...d.d...D..",
+    ".D...t...t...D.",
+    "T..d...T...d..T",
+  ].freeze
 
   def initialize_copy(other)
     super
@@ -87,17 +103,6 @@ class Board
       position = position.send(direction)
     end
     letters.join('') if letters.size > 1
-  end
-
-  def double_word?(position)
-    ([position.x, 15 - position.x + 1].include?(position.y)) &&
-      [2,3,4,5,8,10,11,12,13].include?(position.x)
-  end
-
-  def triple_word?(position)
-    ([1, 8, 15].include?(position.x) &&
-     [1, 8, 15].include?(position.y) &&
-     position != CENTRE)
   end
 
   def check_position(position)

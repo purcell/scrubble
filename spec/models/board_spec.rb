@@ -94,7 +94,7 @@ RSpec.describe Board do
         (1..15).map do |y|
           position = Position.new(x, y)
           multiplier = board.word_multiplier_at(position)
-          if ([x, 15 - x + 1].include?(y)) && [2,3,4,5,8,10,11,12,13].include?(x)
+          if ([x, 15 - x + 1].include?(y)) && [2,3,4,5,8,11,12,13,14].include?(x)
             expect(multiplier).to eql(2)
           else
             expect(multiplier).not_to eql(2)
