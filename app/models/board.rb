@@ -28,7 +28,13 @@ class Board
   end
 
   def word_multiplier_at(position)
-    double_word?(position) ? 2 : 1
+    if double_word?(position)
+      2
+    elsif triple_word?(position)
+      3
+    else
+      1
+    end
   end
 
   private
@@ -86,6 +92,12 @@ class Board
   def double_word?(position)
     ([position.x, 15 - position.x + 1].include?(position.y)) &&
       [2,3,4,5,8,10,11,12,13].include?(position.x)
+  end
+
+  def triple_word?(position)
+    ([1, 8, 15].include?(position.x) &&
+     [1, 8, 15].include?(position.y) &&
+     position != CENTRE)
   end
 
   def check_position(position)

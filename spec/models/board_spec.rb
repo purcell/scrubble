@@ -102,6 +102,20 @@ RSpec.describe Board do
         end
       end
     end
+
+    it "reports only the correct squares as triple words" do
+      (1..15).map do |x|
+        (1..15).map do |y|
+          position = Position.new(x, y)
+          multiplier = board.word_multiplier_at(position)
+          if [1, 8, 15].include?(x) && [1, 8, 15].include?(y) && [x, y] != [8, 8]
+            expect(multiplier).to eql(3)
+          else
+            expect(multiplier).not_to eql(3)
+          end
+        end
+      end
+    end
   end
 
 end
