@@ -1,5 +1,5 @@
 class Board
-  CENTRE = Position.new(7, 7).freeze
+  CENTRE = Position.new(8, 8).freeze
 
   def initialize(dictionary)
     @dictionary = dictionary

@@ -82,11 +82,11 @@ RSpec.describe Board do
 
   describe "word multiplier squares" do
     it "reports the multiplier of a plain square as 1" do
-      expect(board.word_multiplier_at(Position.new(8, 7))).to eql(1)
+      expect(board.word_multiplier_at(Board::CENTRE.right)).to eql(1)
     end
 
     it "reports the middle square as a double word" do
-      expect(board.word_multiplier_at(Position.new(7, 7))).to eql(2)
+      expect(board.word_multiplier_at(Board::CENTRE)).to eql(2)
     end
   end
 
