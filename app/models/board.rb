@@ -28,7 +28,7 @@ class Board
   end
 
   def word_multiplier_at(position)
-    position == CENTRE ? 2 : 1
+    double_word?(position) ? 2 : 1
   end
 
   private
@@ -86,6 +86,11 @@ class Board
       position = position.send(direction)
     end
     letters.join('')
+  end
+
+  def double_word?(position)
+    ([position.x, 15 - position.x + 1].include?(position.y)) &&
+      [2,3,4,5,8,10,11,12,13].include?(position.x)
   end
 
   def check_position(position)
