@@ -20,7 +20,7 @@ class Board
   end
 
   def invalid_words
-    all_words.select(&method(:bad_word?)) + stranded_letters
+    all_words.select(&method(:bad_word?))
   end
 
   def valid_words
@@ -33,31 +33,26 @@ class Board
 
   private
 
-  def stranded_letters
-    letter_positions.inject([]) do |stranded, position|
-      letter = letter_at(position)
-      stranded << letter if letter && !has_neighbours?(position)
-      stranded
-    end
-  end
-
-  def has_neighbours?(position)
-    letter_at(position.left) ||
-      letter_at(position.right) ||
-      letter_at(position.up) ||
-      letter_at(position.down)
-  end
-
   def initialize_copy(other)
     super
     @letters = other.instance_variable_get('@letters').dup
   end
 
   def all_words
-    letter_positions.map do |start_position|
-      rightwards = read_word_from(start_position, :right) unless letter_at(start_position.left)
-      downwards = read_word_from(start_position, :down) unless letter_at(start_position.up)
-      [rightwards, downwards].compact.reject { |word| word.size == 1 }
+    letter_positions.map do |position|
+      left, up = letter_at(position.left), letter_at(position.up)
+      words = []
+      unless left
+        words << read_word_from(position, :right)
+      end
+      unless up
+        words << read_word_from(position, :down)
+      end
+      if !left && !up && !letter_at(position.right) && !letter_at(position.down)
+        # Stranded letter
+        words << letter_at(position)
+      end
+      words.compact
     end.flatten
   end
 
@@ -76,7 +71,7 @@ class Board
   end
 
   def bad_word?(word)
-    !@dictionary.include?(word)
+    word.size == 1 || !@dictionary.include?(word)
   end
 
   def read_word_from(position, direction)
@@ -85,7 +80,7 @@ class Board
       letters << letter
       position = position.send(direction)
     end
-    letters.join('')
+    letters.join('') if letters.size > 1
   end
 
   def double_word?(position)
