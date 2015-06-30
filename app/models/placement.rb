@@ -21,6 +21,12 @@ class Placement
       end
   end
 
+  def score
+    @tiles.inject(0) do |score, tile|
+      score += FACE_VALUES.fetch(tile.letter)
+    end
+  end
+
   private
 
   CENTRE = Position.new(7, 7)
@@ -59,4 +65,13 @@ class Placement
   def sorted_positions
     tiles_sorted_by_position.map(&:position)
   end
+
+  FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
+                     "DG".chars.map { |l| [l, 2] } +
+                     "BCMP".chars.map { |l| [l, 3] } +
+                     "FHVWY".chars.map { |l| [l, 4] } +
+                     "K".chars.map { |l| [l, 5] } +
+                     "JX".chars.map { |l| [l, 8] } +
+                     "QZ".chars.map { |l| [l, 10] }].freeze
+
 end

@@ -84,4 +84,38 @@ RSpec.describe Placement do
     end
   end
 
+  describe "scoring" do
+    context "with no letter placed" do
+      it "reports a zero score" do
+        expect(placement.score).to eq(0)
+      end
+    end
+
+    context "with single letters placed on non-multiplier squares" do
+      ("AEILNORSTU".chars.map { |l| [l, 1] } +
+       "DG".chars.map { |l| [l, 2] } +
+       "BCMP".chars.map { |l| [l, 3] } +
+       "FHVWY".chars.map { |l| [l, 4] } +
+       "K".chars.map { |l| [l, 5] } +
+       "JX".chars.map { |l| [l, 8] } +
+       "QZ".chars.map { |l| [l, 10] }
+      ).each do |letter, face_value|
+
+        it "reports face value score for #{letter}" do
+          placement.place_tile(letter, Position.new(8, 7))
+          expect(placement.score).to eq(face_value)
+        end
+
+      end
+    end
+
+    context "with two letter placed on non-multiplier squares" do
+      it "sums the individual letter values" do
+        placement.place_tile("B", Position.new(8, 7))
+        placement.place_tile("F", Position.new(9, 7))
+        expect(placement.score).to eq(3 + 4)
+      end
+    end
+  end
+
 end
