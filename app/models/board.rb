@@ -1,4 +1,6 @@
 class Board
+  CENTRE = Position.new(7, 7).freeze
+
   def initialize(dictionary)
     @dictionary = dictionary
     @letters = {}
@@ -23,6 +25,10 @@ class Board
 
   def valid_words
     all_words.reject(&method(:bad_word?))
+  end
+
+  def word_multiplier_at(position)
+    position == CENTRE ? 2 : 1
   end
 
   private

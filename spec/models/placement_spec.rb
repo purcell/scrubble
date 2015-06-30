@@ -109,11 +109,20 @@ RSpec.describe Placement do
       end
     end
 
-    context "with two letter placed on non-multiplier squares" do
-      it "sums the individual letter values" do
+    context "with two letters placed on non-multiplier squares" do
+      it "sums the face values" do
         placement.place_tile("B", Position.new(8, 7))
         placement.place_tile("F", Position.new(9, 7))
         expect(placement.score).to eq(3 + 4)
+      end
+    end
+
+    context "with letters placed on the centre square" do
+      it "doubles the word score" do
+        placement.place_tile("B", Position.new(7, 7))
+        placement.place_tile("O", Position.new(8, 7))
+        placement.place_tile("X", Position.new(9, 7))
+        expect(placement.score).to eq(2 * (3 + 1 + 8))
       end
     end
   end

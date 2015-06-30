@@ -15,21 +15,23 @@ class Placement
       (all_on_same_row? || all_on_same_column?) &&
       creates_valid_words? &&
       if @board.empty?
-        sorted_positions.include?(CENTRE) && @tiles.size > 1
+        sorted_positions.include?(Board::CENTRE) && @tiles.size > 1
       else
         true
       end
   end
 
   def score
-    @tiles.inject(0) do |score, tile|
-      score += FACE_VALUES.fetch(tile.letter)
+    letter_score = 0
+    word_multiplier = 1
+    @tiles.each do |tile|
+      word_multiplier *= @board.word_multiplier_at(tile.position)
+      letter_score += FACE_VALUES.fetch(tile.letter)
     end
+    letter_score * word_multiplier
   end
 
   private
-
-  CENTRE = Position.new(7, 7)
 
   PlacedTile = Struct.new(:letter, :position)
 
