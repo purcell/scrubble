@@ -142,6 +142,28 @@ RSpec.describe Placement do
         expect(placement.score).to eq(1 + 2 * 8)
       end
     end
+
+    context "with letters on multiple multiplier squares" do
+      it "multiplies letters then words" do
+        placement.place_tile("B", Position.new(1, 1))
+        placement.place_tile("O", Position.new(2, 1))
+        placement.place_tile("A", Position.new(3, 1))
+        placement.place_tile("T", Position.new(4, 1))
+        expect(placement.score).to eq (3 * (3 + 1 + 1 + 1 * 2))
+      end
+
+      it "compounds word multipliers" do
+        placement.place_tile("B", Position.new(1, 8))
+        placement.place_tile("O", Position.new(2, 8))
+        placement.place_tile("A", Position.new(3, 8))
+        placement.place_tile("T", Position.new(4, 8))
+        placement.place_tile("R", Position.new(5, 8))
+        placement.place_tile("I", Position.new(6, 8))
+        placement.place_tile("D", Position.new(7, 8))
+        placement.place_tile("E", Position.new(8, 8))
+        expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1  + 1 + 2 + 1))
+      end
+    end
   end
 
 end
