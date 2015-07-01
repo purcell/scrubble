@@ -94,12 +94,12 @@ RSpec.describe Placement do
 
     context "with single letters placed on non-multiplier squares" do
       ("AEILNORSTU".chars.map { |l| [l, 1] } +
-       "DG".chars.map { |l| [l, 2] } +
-       "BCMP".chars.map { |l| [l, 3] } +
-       "FHVWY".chars.map { |l| [l, 4] } +
-       "K".chars.map { |l| [l, 5] } +
-       "JX".chars.map { |l| [l, 8] } +
-       "QZ".chars.map { |l| [l, 10] }
+       "DG".chars.map         { |l| [l, 2] } +
+       "BCMP".chars.map       { |l| [l, 3] } +
+       "FHVWY".chars.map      { |l| [l, 4] } +
+       "K".chars.map          { |l| [l, 5] } +
+       "JX".chars.map         { |l| [l, 8] } +
+       "QZ".chars.map         { |l| [l, 10] }
       ).each do |letter, face_value|
 
         it "reports face value score for #{letter}" do

@@ -69,11 +69,11 @@ class Placement
   end
 
   FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
-                     "DG".chars.map { |l| [l, 2] } +
-                     "BCMP".chars.map { |l| [l, 3] } +
-                     "FHVWY".chars.map { |l| [l, 4] } +
-                     "K".chars.map { |l| [l, 5] } +
-                     "JX".chars.map { |l| [l, 8] } +
-                     "QZ".chars.map { |l| [l, 10] }].freeze
+                     "DG".chars.map         { |l| [l, 2] } +
+                     "BCMP".chars.map       { |l| [l, 3] } +
+                     "FHVWY".chars.map      { |l| [l, 4] } +
+                     "K".chars.map          { |l| [l, 5] } +
+                     "JX".chars.map         { |l| [l, 8] } +
+                     "QZ".chars.map         { |l| [l, 10] }].freeze
 
 end
