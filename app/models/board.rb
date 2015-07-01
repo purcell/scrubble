@@ -20,11 +20,11 @@ class Board
   end
 
   def invalid_words
-    all_words.select(&method(:bad_word?))
+    all_words.reject(&method(:valid_word?))
   end
 
   def valid_words
-    all_words.reject(&method(:bad_word?))
+    all_words.select(&method(:valid_word?))
   end
 
   def letter_multiplier_at(position)
@@ -100,8 +100,8 @@ class Board
     positions_from_top_left.find_all { |position| letter_at(position) }
   end
 
-  def bad_word?(word)
-    word.size == 1 || !@dictionary.include?(word)
+  def valid_word?(word)
+    word.size > 1 && @dictionary.include?(word)
   end
 
   def read_word_from(position, direction)
