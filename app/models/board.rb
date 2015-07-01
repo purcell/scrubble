@@ -28,7 +28,7 @@ class Board
   end
 
   def letter_multiplier_at(position)
-    case LAYOUT[position.y - 1][position.x - 1]
+    case layout_code_at(position)
     when 'd' then 2
     when 't' then 3
     else 1
@@ -36,7 +36,7 @@ class Board
   end
 
   def word_multiplier_at(position)
-    case LAYOUT[position.y - 1][position.x - 1]
+    case layout_code_at(position)
     when 'D' then 2
     when 'T' then 3
     else 1
@@ -62,6 +62,10 @@ class Board
     ".D...t...t...D.",
     "T..d...T...d..T",
   ].freeze
+
+  def layout_code_at(position)
+    LAYOUT[position.y - 1][position.x - 1]
+  end
 
   def initialize_copy(other)
     super
