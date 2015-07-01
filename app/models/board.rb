@@ -27,6 +27,14 @@ class Board
     all_words.reject(&method(:bad_word?))
   end
 
+  def letter_multiplier_at(position)
+    case LAYOUT[position.y - 1][position.x - 1]
+    when 'd' then 2
+    when 't' then 3
+    else 1
+    end
+  end
+
   def word_multiplier_at(position)
     case LAYOUT[position.y - 1][position.x - 1]
     when 'D' then 2

@@ -127,11 +127,19 @@ RSpec.describe Placement do
       end
     end
 
-    context "with letters on a corner square" do
+    context "with two letters in the corner" do
       it "triples the word score" do
         placement.place_tile("A", Position.new(1, 1))
         placement.place_tile("X", Position.new(2, 1))
         expect(placement.score).to eq(3 * (1 + 8))
+      end
+    end
+
+    context "with letter on a double-letter square" do
+      it "doubles that letter score" do
+        placement.place_tile("A", Position.new(3, 1))
+        placement.place_tile("X", Position.new(4, 1))
+        expect(placement.score).to eq(1 + 2 * 8)
       end
     end
   end

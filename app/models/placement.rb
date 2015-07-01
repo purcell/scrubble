@@ -26,7 +26,7 @@ class Placement
     word_multiplier = 1
     @tiles.each do |tile|
       word_multiplier *= @board.word_multiplier_at(tile.position)
-      letter_score += FACE_VALUES.fetch(tile.letter)
+      letter_score += FACE_VALUES.fetch(tile.letter) * @board.letter_multiplier_at(tile.position)
     end
     letter_score * word_multiplier
   end

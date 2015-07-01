@@ -118,4 +118,22 @@ RSpec.describe Board do
     end
   end
 
+  describe "letter multiplier squares" do
+    it "reports the letter multiplier as 1 for plain squares" do
+      expect(board.letter_multiplier_at(Position.new(2, 1))).to eq(1)
+      expect(board.letter_multiplier_at(Position.new(7, 8))).to eq(1)
+    end
+
+    it "reports the letter multiplier as 2 for double-letter squares" do
+      expect(board.letter_multiplier_at(Position.new(4, 1))).to eq(2)
+      expect(board.letter_multiplier_at(Position.new(8, 12))).to eq(2)
+    end
+
+    it "reports the letter multiplier as 3 for triple-letter squares" do
+      expect(board.letter_multiplier_at(Position.new(6, 2))).to eq(3)
+      expect(board.letter_multiplier_at(Position.new(14, 10))).to eq(3)
+    end
+
+  end
+
 end
