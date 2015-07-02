@@ -7,7 +7,7 @@ RSpec.describe Placement do
   let(:centre) { Board::CENTRE }
 
   def tile(*args)
-    placement.place_tile(*args)
+    placement.place(PlacedTile.new(*args))
   end
 
   context "on an empty board" do
@@ -62,8 +62,8 @@ RSpec.describe Placement do
 
   context "on a non-empty board" do
     before do
-      board.add_letter("T", centre)
-      board.add_letter("O", centre.right)
+      board.place(PlacedTile.new("T", centre))
+      board.place(PlacedTile.new("O", centre.right))
     end
 
     it "rejects tiles placed on occupied squares" do
@@ -97,6 +97,7 @@ RSpec.describe Placement do
     end
 
     context "with single letters placed on non-multiplier squares" do
+      # TODO: this test somewhat duplicates one for PlacedTile
       ("AEILNORSTU".chars.map { |l| [l, 1] } +
        "DG".chars.map         { |l| [l, 2] } +
        "BCMP".chars.map       { |l| [l, 3] } +
@@ -168,6 +169,21 @@ RSpec.describe Placement do
         expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1  + 1 + 2 + 1))
       end
     end
+  end
+
+  describe "scoring off a previously-played word" do
+    context "on non-multiplier squares" do
+      before do
+        board.place(PlacedTile.new("T", Position.new(3, 2)))
+        board.place(PlacedTile.new("O", Position.new(4, 2)))
+      end
+
+      it "scores the whole word" do
+        tile("N", Position.new(5, 2))
+        expect(placement.score).to eq(3)
+      end
+    end
+
   end
 
 end

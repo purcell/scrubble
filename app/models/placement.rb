@@ -4,8 +4,8 @@ class Placement
     @tiles = []
   end
 
-  def place_tile(letter, position)
-    @tiles << PlacedTile.new(letter, position)
+  def place(placed_tile)
+    @tiles << placed_tile
   end
 
   def valid?
@@ -19,18 +19,18 @@ class Placement
   end
 
   def score
-    letter_score = 0
-    word_multiplier = 1
-    @tiles.each do |tile|
-      word_multiplier *= @board.word_multiplier_at(tile.position)
-      letter_score += FACE_VALUES.fetch(tile.letter) * @board.letter_multiplier_at(tile.position)
-    end
-    letter_score * word_multiplier
+    new_board.words.map do |word_tiles|
+      letter_score = 0
+      word_multiplier = 1
+      word_tiles.each do |tile|
+        word_multiplier *= @board.word_multiplier_at(tile.position)
+        letter_score += tile.face_value * @board.letter_multiplier_at(tile.position)
+      end
+      letter_score * word_multiplier
+    end.inject(0, &:+)
   end
 
   private
-
-  PlacedTile = Struct.new(:letter, :position)
 
   def covers_centre_square?
     positions.include?(Board::CENTRE)
@@ -45,11 +45,15 @@ class Placement
   end
 
   def creates_valid_words?
-    new_board = @board.dup
-    @tiles.each do |tile|
-      new_board.add_letter(tile.letter, tile.position)
-    end
     new_board.invalid_words.empty?
+  end
+
+  def new_board
+    @board.dup.tap do |new_board|
+      @tiles.each do |tile|
+        new_board.place(tile)
+      end
+    end
   end
 
   def distinct_positions?
@@ -67,13 +71,5 @@ class Placement
   def positions
     @tiles.map(&:position)
   end
-
-  FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
-                     "DG".chars.map         { |l| [l, 2] } +
-                     "BCMP".chars.map       { |l| [l, 3] } +
-                     "FHVWY".chars.map      { |l| [l, 4] } +
-                     "K".chars.map          { |l| [l, 5] } +
-                     "JX".chars.map         { |l| [l, 8] } +
-                     "QZ".chars.map         { |l| [l, 10] }].freeze
 
 end
