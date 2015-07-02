@@ -23,8 +23,12 @@ class Placement
       letter_score = 0
       word_multiplier = 1
       word_tiles.each do |tile|
-        word_multiplier *= @board.word_multiplier_at(tile.position)
-        letter_score += tile.face_value * @board.letter_multiplier_at(tile.position)
+        letter_multiplier = 1
+        if @tiles.include?(tile)
+          word_multiplier *= @board.word_multiplier_at(tile.position)
+          letter_multiplier = @board.letter_multiplier_at(tile.position)
+        end
+        letter_score += tile.face_value * letter_multiplier
       end
       letter_score * word_multiplier
     end.inject(0, &:+)

@@ -184,6 +184,25 @@ RSpec.describe Placement do
       end
     end
 
+    context "on word-multiplier squares" do
+      before do
+        board.place(PlacedTile.new("T", Position.new(2, 1)))
+        board.place(PlacedTile.new("O", Position.new(3, 1)))
+      end
+
+      it "only applies new letter multipliers" do
+        board.place(PlacedTile.new("E", Position.new(1, 1)))
+        tile("N", Position.new(4, 1))
+        expect(placement.score).to eq(5)
+      end
+
+      it "only applies new word multipliers" do
+        board.place(PlacedTile.new("N", Position.new(4, 1)))
+        tile("E", Position.new(1, 1))
+        expect(placement.score).to eq(12)
+      end
+    end
+
   end
 
 end
