@@ -14,11 +14,8 @@ class Placement
       distinct_positions? &&
       (all_on_same_row? || all_on_same_column?) &&
       creates_valid_words? &&
-      if @board.empty?
-        sorted_positions.include?(Board::CENTRE) && @tiles.size > 1
-      else
-        true
-      end
+      (letters_previously_placed? || covers_centre_square?) &&
+      (letters_previously_placed? || @tiles.size > 1)
   end
 
   def score
@@ -35,6 +32,14 @@ class Placement
 
   PlacedTile = Struct.new(:letter, :position)
 
+  def covers_centre_square?
+    positions.include?(Board::CENTRE)
+  end
+
+  def letters_previously_placed?
+    !@board.empty?
+  end
+
   def all_on_free_squares?
     @tiles.map(&:position).all? { |pos| @board.letter_at(pos).nil?}
   end
@@ -48,24 +53,19 @@ class Placement
   end
 
   def distinct_positions?
-    positions = sorted_positions
-    positions.uniq == sorted_positions
+    positions.uniq == positions
   end
 
   def all_on_same_row?
-    sorted_positions.map(&:x).uniq.size == 1
+    positions.map(&:x).uniq.size == 1
   end
 
   def all_on_same_column?
-    sorted_positions.map(&:y).uniq.size == 1
+    positions.map(&:y).uniq.size == 1
   end
 
-  def tiles_sorted_by_position
-    @tiles.sort_by(&:position)
-  end
-
-  def sorted_positions
-    tiles_sorted_by_position.map(&:position)
+  def positions
+    @tiles.map(&:position)
   end
 
   FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
