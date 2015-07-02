@@ -19,7 +19,7 @@ class Placement
   end
 
   def score
-    new_board.words.map do |word_tiles|
+    resulting_words.map do |word_tiles|
       letter_score = 0
       word_multiplier = 1
       word_tiles.each do |tile|
@@ -35,6 +35,10 @@ class Placement
   end
 
   private
+
+  def resulting_words
+    new_board.words.select { |word_tiles| (word_tiles & @tiles).any? }
+  end
 
   def covers_centre_square?
     positions.include?(Board::CENTRE)

@@ -169,6 +169,16 @@ RSpec.describe Placement do
         expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1  + 1 + 2 + 1))
       end
     end
+
+    context "with unrelated words on the board" do
+      it "only scores the newly-added word" do
+        board.place(PlacedTile.new("T", Position.new(3, 2)))
+        board.place(PlacedTile.new("O", Position.new(4, 2)))
+        tile("A", Position.new(9, 1))
+        tile("T", Position.new(10, 1))
+        expect(placement.score).to eq(2)
+      end
+    end
   end
 
   describe "scoring off a previously-played word" do
@@ -204,5 +214,4 @@ RSpec.describe Placement do
     end
 
   end
-
 end
