@@ -105,18 +105,8 @@ class Board
     end.inject([], :+)
   end
 
-  def positions_from_top_left
-    Enumerator.new do |enum|
-      coord_range.each do |x|
-        coord_range.each do |y|
-          enum << Position.new(x, y)
-        end
-      end
-    end
-  end
-
   def tile_positions
-    positions_from_top_left.find_all { |position| tile_at(position) }
+    @tiles_by_position.keys
   end
 
   def valid_word?(word)
