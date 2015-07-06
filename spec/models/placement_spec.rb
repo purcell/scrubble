@@ -67,8 +67,8 @@ RSpec.describe Placement do
 
   context "on a non-empty board" do
     before do
-      board_has(PlacedTile.new("T", centre))
-      board_has(PlacedTile.new("O", centre.right))
+      board_has("T", centre)
+      board_has("O", centre.right)
     end
 
     it "rejects tiles placed on occupied squares" do
@@ -177,8 +177,8 @@ RSpec.describe Placement do
 
     context "with unrelated words on the board" do
       it "only scores the newly-added word" do
-        board_has(PlacedTile.new("T", Position.new(3, 2)))
-        board_has(PlacedTile.new("O", Position.new(4, 2)))
+        board_has("T", Position.new(3, 2))
+        board_has("O", Position.new(4, 2))
         place("A", Position.new(9, 1))
         place("T", Position.new(10, 1))
         expect(placement.score).to eq(2)
@@ -189,8 +189,8 @@ RSpec.describe Placement do
   describe "scoring off a previously-played word" do
     context "on non-multiplier squares" do
       before do
-        board_has(PlacedTile.new("T", Position.new(3, 2)))
-        board_has(PlacedTile.new("O", Position.new(4, 2)))
+        board_has("T", Position.new(3, 2))
+        board_has("O", Position.new(4, 2))
       end
 
       it "scores the whole word" do
@@ -201,18 +201,18 @@ RSpec.describe Placement do
 
     context "on word-multiplier squares" do
       before do
-        board_has(PlacedTile.new("T", Position.new(2, 1)))
-        board_has(PlacedTile.new("O", Position.new(3, 1)))
+        board_has("T", Position.new(2, 1))
+        board_has("O", Position.new(3, 1))
       end
 
       it "only applies new letter multipliers" do
-        board_has(PlacedTile.new("E", Position.new(1, 1)))
+        board_has("E", Position.new(1, 1))
         place("N", Position.new(4, 1))
         expect(placement.score).to eq(5)
       end
 
       it "only applies new word multipliers" do
-        board_has(PlacedTile.new("N", Position.new(4, 1)))
+        board_has("N", Position.new(4, 1))
         place("E", Position.new(1, 1))
         expect(placement.score).to eq(12)
       end
