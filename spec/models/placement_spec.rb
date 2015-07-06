@@ -219,4 +219,12 @@ RSpec.describe Placement do
     end
 
   end
+
+  context "when playing blank tiles" do
+    it "counts the letter score as 0" do
+      place("A", Position.new(2, 1))
+      place("X", Position.new(3, 1), true)
+      expect(placement.score).to eq(1)
+    end
+  end
 end

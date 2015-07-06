@@ -1,14 +1,15 @@
 class PlacedTile
   attr_reader :letter, :position
 
-  def initialize(letter, position)
+  def initialize(letter, position, blank=false)
     raise(ArgumentError, "invalid letter #{letter}") unless ('A'..'Z').include?(letter)
     @letter = letter
     @position = position
+    @blank = blank
   end
 
   def face_value
-    FACE_VALUES.fetch(letter)
+    @blank ? 0 : FACE_VALUES.fetch(letter)
   end
 
   private
