@@ -14,8 +14,7 @@ class Placement
       distinct_positions? &&
       (all_on_same_row? || all_on_same_column?) &&
       creates_valid_words? &&
-      (letters_previously_placed? || covers_centre_square?) &&
-      (letters_previously_placed? || @tiles.size > 1)
+      (letters_previously_placed? || covers_centre_square?)
   end
 
   def score
