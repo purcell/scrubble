@@ -227,4 +227,20 @@ RSpec.describe Placement do
       expect(placement.score).to eq(1)
     end
   end
+
+  context "when playing blanks on a word multiplier" do
+    it "still applies the multiplier" do
+      place("A", Position.new(1, 1), true)
+      place("X", Position.new(2, 1))
+      expect(placement.score).to eq(24)
+    end
+  end
+
+  context "when blanks were previously played" do
+    it "counts the letter score as 0" do
+      board_has("A", Position.new(2, 1), true)
+      place("X", Position.new(3, 1))
+      expect(placement.score).to eq(8)
+    end
+  end
 end
