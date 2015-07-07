@@ -1,0 +1,29 @@
+http://www.hasbro.com/scrabble/en_US/discover/rules.cfm
+http://www.scrabblesite.com/scrabble/rules/
+
+- Scoring: letters, grid, blanks
+  - Multipliers are cumulative
+- Starting: draw from the bag
+
+- Draw 7 tiles each
+- Each turn:
+  - Player can either:
+    - Place word (2 or more letters)
+      - All in 1 row or column
+      - When placing a blank, its letter becomes fixed (Tile -> PlacedTile?)
+    - Exchange one or more tiles
+      - Not when < 7 letters in the bag
+    - Pass - if all players pass twice in a row, game ends
+- First turn
+  - Star square at centre, acts as double word score for this play only
+- When placing 7 tiles at the same time, get 50 point bonus (a "Bingo")
+- Final turn:
+  - When player has used all his letters, also scores sum of other players' unplayed letters
+  - Each player's score is reduced by sum of his unplayed letters
+  - Player with highest score wins
+    - Tie-break: player with highest score before adding or deducting unplayed letters wins
+
+- Acceptable words
+  - "Standard English dictionary"
+  - Not: abbreviations, prefixes, suffixes, capitalised, containing "-" or "'"
+- Challenges (assume not relevant if using a dictionary)
