@@ -1,6 +1,6 @@
 class Bag
 
-  def initialize(letters=fresh_contents)
+  def initialize(letters=full_bag_contents)
     raise ArgumentError unless letters =~ /\A[A-Z ]*\z/
     @letters = letters.chars
   end
@@ -23,7 +23,7 @@ class Bag
 
   private
 
-  def fresh_contents
+  def full_bag_contents
     FREQUENCIES.map do |char, freq|
       char * freq
     end.join.chars.shuffle.join
