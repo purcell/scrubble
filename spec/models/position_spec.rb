@@ -1,3 +1,5 @@
+require 'rails_helper'
+
 RSpec.describe Position do
   let(:position) { Position.new(7, 8) }
 
