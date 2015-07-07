@@ -1,6 +1,7 @@
 class Bag
 
   def initialize(letters=fresh_contents)
+    raise ArgumentError unless letters =~ /\A[A-Z ]*\z/
     @letters = letters.chars
   end
 

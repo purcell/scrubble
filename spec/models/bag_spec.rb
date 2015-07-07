@@ -59,4 +59,10 @@ RSpec.describe Bag do
     expect(bag).to be_empty
   end
 
+  it "complains if contents are not legal" do
+    ["a" "1" "ABC^D"].each do |bad_content|
+      expect { Bag.new(bad_content) }.to raise_error(ArgumentError)
+    end
+  end
+
 end
