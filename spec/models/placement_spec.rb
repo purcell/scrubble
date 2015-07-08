@@ -8,11 +8,15 @@ RSpec.describe Placement do
   subject(:placement) { Placement.new(board) }
 
   def place(*args)
-    placement.place(PlacedTile.new(*args))
+    PlacedTile.new(*args).tap do |tile|
+      placement.place(tile)
+    end
   end
 
   def board_has(*args)
-    board.place(PlacedTile.new(*args))
+    PlacedTile.new(*args).tap do |tile|
+      board.place(tile)
+    end
   end
 
   context "on an empty board" do
@@ -103,20 +107,11 @@ RSpec.describe Placement do
 
     context "with single letters placed on non-multiplier squares" do
       # TODO: this test somewhat duplicates one for PlacedTile
-      ("AEILNORSTU".chars.map { |l| [l, 1] } +
-       "DG".chars.map         { |l| [l, 2] } +
-       "BCMP".chars.map       { |l| [l, 3] } +
-       "FHVWY".chars.map      { |l| [l, 4] } +
-       "K".chars.map          { |l| [l, 5] } +
-       "JX".chars.map         { |l| [l, 8] } +
-       "QZ".chars.map         { |l| [l, 10] }
-      ).each do |letter, face_value|
-
+      ("A".."Z").each do |letter|
         it "reports face value score for #{letter}" do
-          place(letter, centre.down)
-          expect(placement.score).to eq(face_value)
+          tile = place(letter, centre.down)
+          expect(placement.score).to eq(tile.face_value)
         end
-
       end
     end
 
