@@ -106,7 +106,6 @@ RSpec.describe Placement do
     end
 
     context "with single letters placed on non-multiplier squares" do
-      # TODO: this test somewhat duplicates one for PlacedTile
       ("A".."Z").each do |letter|
         it "reports face value score for #{letter}" do
           tile = place(letter, centre.down)
