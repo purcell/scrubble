@@ -18,15 +18,24 @@ class GamesController < ApplicationController
     end
   end
 
+  class GamePresenter
+    attr_reader :board
 
-  def show
-    laid_out = Board.new([])
-    laid_out.place(PlacedTile.new("L", Position.new(8, 8)))
-    laid_out.place(PlacedTile.new("O", Position.new(9, 8)))
-    laid_out.place(PlacedTile.new("L", Position.new(10, 8)))
-    laid_out.place(PlacedTile.new("Z", Position.new(11, 8)))
-    @board = BoardPresenter.new(laid_out)
+    def initialize()
+      laid_out = Board.new([])
+      laid_out.place(PlacedTile.new("L", Position.new(8, 8)))
+      laid_out.place(PlacedTile.new("O", Position.new(9, 8)))
+      laid_out.place(PlacedTile.new("L", Position.new(10, 8)))
+      laid_out.place(PlacedTile.new("Z", Position.new(11, 8)))
+      laid_out.place(PlacedTile.new("O", Position.new(11, 9), true))
+      laid_out.place(PlacedTile.new("M", Position.new(11, 10)))
+      laid_out.place(PlacedTile.new("G", Position.new(11, 11)))
+      @board = BoardPresenter.new(laid_out)
+    end
   end
 
+  def show
+    @game = GamePresenter.new()
+  end
 
 end

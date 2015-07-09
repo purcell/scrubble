@@ -57,6 +57,8 @@
 }
 
 .tile {
+    color: #222;
+    position: relative;
     height: 24px;
     vertical-align: baseline;
     text-align: center;
@@ -70,4 +72,16 @@
     border-bottom-color: #ccc;
     font-family: serif;
     font-weight: bold;
+}
+
+.tile.tile-blank {
+    color: #888;
+}
+
+.tile-face-value {
+    color: #666;
+    position: absolute;
+    top: 12px;
+    left: 18px;
+    font-size: 8px;
 }

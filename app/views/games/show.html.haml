@@ -1,8 +1,9 @@
 .board
-  - for row in @board.rows
+  - for row in @game.board.rows
     .board-row
       - for square in row
         .board-square{class: "word-multiplier-#{square.word_multiplier} letter-multiplier-#{square.letter_multiplier}"}
           - if tile = square.tile
-            .tile{class: (".tile-blank" if tile.blank?) }
+            .tile{class: ("tile-blank" if tile.blank?) }
               = tile.letter
+              .tile-face-value= tile.face_value
