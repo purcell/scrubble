@@ -7,93 +7,87 @@ RSpec.describe Placement do
 
   subject(:placement) { Placement.new(board) }
 
-  def place(*args)
-    PlacedTile.new(*args).tap do |tile|
-      placement.place(tile)
-    end
+  def place(position, *tileargs)
+    placement.place(position, Tile.new(*tileargs))
   end
 
-  def board_has(*args)
-    PlacedTile.new(*args).tap do |tile|
-      board.place(tile)
-    end
+  def board_has(position, *tileargs)
+    board.place(position, Tile.new(*tileargs))
   end
 
   context "on an empty board" do
 
     it "rejects a single tile on the centre square" do
-      place("I", centre)
+      place(centre, "I")
       is_expected.to_not be_valid
     end
 
     it "allows a two-letter word spanning the centre square" do
-      place("I", centre)
-      place("T", centre.right)
+      place(centre, "I")
+      place(centre.right, "T")
       is_expected.to be_valid
     end
 
     it "requires that the centre square be covered" do
-      place("I", centre.right)
-      place("T", centre.right.right)
+      place(centre.right, "I")
+      place(centre.right.right, "T")
       is_expected.to_not be_valid
     end
 
     it "allows vertical words" do
-      place("I", centre)
-      place("T", centre.down)
+      place(centre, "I")
+      place(centre.down, "T")
       is_expected.to be_valid
     end
 
     it "rejects tiles on a diagonal" do
-      place("I", centre)
-      place("T", centre.down.right)
+      place(centre, "I")
+      place(centre.down.right, "T")
       is_expected.to_not be_valid
     end
 
     it "rejects non-contiguous tiles" do
-      place("I", centre)
-      place("T", centre.right.right)
+      place(centre, "I")
+      place(centre.right.right, "T")
       is_expected.to_not be_valid
     end
 
     it "rejects tiles placed on the same square" do
-      place("I", centre)
-      place("T", centre)
-      is_expected.to_not be_valid
+      place(centre, "I")
+      expect { place(centre, "T") }.to raise_error(Placement::InvalidPlace)
     end
 
     it "rejects words not in the dictionary" do
-      place("Z", centre)
-      place("Q", centre.down)
+      place(centre, "Z")
+      place(centre.down, "Q")
       is_expected.to_not be_valid
     end
   end
 
   context "on a non-empty board" do
     before do
-      board_has("T", centre)
-      board_has("O", centre.right)
+      board_has(centre, "T")
+      board_has(centre.right, "O")
     end
 
     it "rejects tiles placed on occupied squares" do
-      place("T", centre)
-      is_expected.to_not be_valid
+      expect { place(centre, "T") }.to raise_error(Placement::InvalidPlace)
     end
 
     it "allows tiles which extend existing words" do
-      place("N", centre.right.right)
+      place(centre.right.right, "N")
       is_expected.to be_valid
     end
 
     it "allows tiles which extend existing words at both ends" do
-      place("N", centre.right.right)
-      place("E", centre.left)
+      place(centre.right.right, "N")
+      place(centre.left, "E")
       is_expected.to be_valid
     end
 
     it "adding a tile doesn't modify the original board" do
       position = centre.right.right
-      place("N", position)
+      place(position, "N")
       expect(board.letter_at(position)).to be_nil
     end
   end
@@ -108,7 +102,7 @@ RSpec.describe Placement do
     context "with single letters placed on non-multiplier squares" do
       ("A".."Z").each do |letter|
         it "reports face value score for #{letter}" do
-          tile = place(letter, centre.down)
+          tile = place(centre.down, letter)
           expect(placement.score).to eq(tile.face_value)
         end
       end
@@ -116,65 +110,65 @@ RSpec.describe Placement do
 
     context "with two letters placed on non-multiplier squares" do
       it "sums the face values" do
-        place("B", centre.right)
-        place("F", centre.right.right)
+        place(centre.right, "B")
+        place(centre.right.right, "F")
         expect(placement.score).to eq(3 + 4)
       end
     end
 
     context "with letters placed on the centre square" do
       it "doubles the word score" do
-        place("B", centre)
-        place("O", centre.right)
-        place("X", centre.right.right)
+        place(centre, "B")
+        place(centre.right, "O")
+        place(centre.right.right, "X")
         expect(placement.score).to eq(2 * (3 + 1 + 8))
       end
     end
 
     context "with two letters in the corner" do
       it "triples the word score" do
-        place("A", Position.new(1, 1))
-        place("X", Position.new(2, 1))
+        place(Position.new(1, 1), "A")
+        place(Position.new(2, 1), "X")
         expect(placement.score).to eq(3 * (1 + 8))
       end
     end
 
     context "with letter on a double-letter square" do
       it "doubles that letter score" do
-        place("A", Position.new(3, 1))
-        place("X", Position.new(4, 1))
+        place(Position.new(3, 1), "A")
+        place(Position.new(4, 1), "X")
         expect(placement.score).to eq(1 + 2 * 8)
       end
     end
 
     context "with letters on multiple multiplier squares" do
       it "multiplies letters then words" do
-        place("B", Position.new(1, 1))
-        place("O", Position.new(2, 1))
-        place("A", Position.new(3, 1))
-        place("T", Position.new(4, 1))
+        place(Position.new(1, 1), "B")
+        place(Position.new(2, 1), "O")
+        place(Position.new(3, 1), "A")
+        place(Position.new(4, 1), "T")
         expect(placement.score).to eq (3 * (3 + 1 + 1 + 1 * 2))
       end
 
       it "compounds word multipliers" do
-        place("B", Position.new(1, 8))
-        place("O", Position.new(2, 8))
-        place("A", Position.new(3, 8))
-        place("T", Position.new(4, 8))
-        place("R", Position.new(5, 8))
-        place("I", Position.new(6, 8))
-        place("D", Position.new(7, 8))
-        place("E", Position.new(8, 8))
+        place(Position.new(1, 8), "B")
+        place(Position.new(2, 8), "O")
+        place(Position.new(3, 8), "A")
+        place(Position.new(4, 8), "T")
+        place(Position.new(5, 8), "R")
+        place(Position.new(6, 8), "I")
+        place(Position.new(7, 8), "D")
+        place(Position.new(8, 8), "E")
         expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1  + 1 + 2 + 1))
       end
     end
 
     context "with unrelated words on the board" do
       it "only scores the newly-added word" do
-        board_has("T", Position.new(3, 2))
-        board_has("O", Position.new(4, 2))
-        place("A", Position.new(9, 1))
-        place("T", Position.new(10, 1))
+        board_has(Position.new(3, 2), "T")
+        board_has(Position.new(4, 2), "O")
+        place(Position.new(9, 1), "A")
+        place(Position.new(10, 1), "T")
         expect(placement.score).to eq(2)
       end
     end
@@ -183,31 +177,31 @@ RSpec.describe Placement do
   describe "scoring off a previously-played word" do
     context "on non-multiplier squares" do
       before do
-        board_has("T", Position.new(3, 2))
-        board_has("O", Position.new(4, 2))
+        board_has(Position.new(3, 2), "T")
+        board_has(Position.new(4, 2), "O")
       end
 
       it "scores the whole word" do
-        place("N", Position.new(5, 2))
+        place(Position.new(5, 2), "N")
         expect(placement.score).to eq(3)
       end
     end
 
     context "on word-multiplier squares" do
       before do
-        board_has("T", Position.new(2, 1))
-        board_has("O", Position.new(3, 1))
+        board_has(Position.new(2, 1), "T")
+        board_has(Position.new(3, 1), "O")
       end
 
       it "only applies new letter multipliers" do
-        board_has("E", Position.new(1, 1))
-        place("N", Position.new(4, 1))
+        board_has(Position.new(1, 1), "E")
+        place(Position.new(4, 1), "N")
         expect(placement.score).to eq(5)
       end
 
       it "only applies new word multipliers" do
-        board_has("N", Position.new(4, 1))
-        place("E", Position.new(1, 1))
+        board_has(Position.new(4, 1), "N")
+        place(Position.new(1, 1), "E")
         expect(placement.score).to eq(12)
       end
     end
@@ -216,24 +210,24 @@ RSpec.describe Placement do
 
   context "when playing blank tiles" do
     it "counts the letter score as 0" do
-      place("A", Position.new(2, 1))
-      place("X", Position.new(3, 1), true)
+      place(Position.new(2, 1), "A")
+      place(Position.new(3, 1), "X", true)
       expect(placement.score).to eq(1)
     end
   end
 
   context "when playing blanks on a word multiplier" do
     it "still applies the multiplier" do
-      place("A", Position.new(1, 1), true)
-      place("X", Position.new(2, 1))
+      place(Position.new(1, 1), "A", true)
+      place(Position.new(2, 1), "X")
       expect(placement.score).to eq(24)
     end
   end
 
   context "when blanks were previously played" do
     it "counts the letter score as 0" do
-      board_has("A", Position.new(2, 1), true)
-      place("X", Position.new(3, 1))
+      board_has(Position.new(2, 1), "A", true)
+      place(Position.new(3, 1), "X")
       expect(placement.score).to eq(8)
     end
   end

@@ -19,9 +19,9 @@ class Board
     tile_at(position).try(&:letter)
   end
 
-  def place(placed_tile)
-    check_position(placed_tile.position)
-    @tiles_by_position[placed_tile.position] = placed_tile
+  def place(position, tile)
+    check_position(position)
+    @tiles_by_position[position] = tile
   end
 
   def words

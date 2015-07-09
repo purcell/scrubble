@@ -1,10 +1,9 @@
-class PlacedTile
-  attr_reader :letter, :position
+class Tile
+  attr_reader :letter
 
-  def initialize(letter, position, blank=false)
+  def initialize(letter, blank=false)
     raise(ArgumentError, "invalid letter #{letter}") unless ('A'..'Z').include?(letter)
     @letter = letter
-    @position = position
     @blank = blank
   end
 

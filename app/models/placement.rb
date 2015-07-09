@@ -1,17 +1,21 @@
 class Placement
+  class InvalidPlace < StandardError; end
+
   def initialize(board)
     @board = board
-    @tiles = []
+    @tiles = {}
   end
 
-  def place(placed_tile)
-    @tiles << placed_tile
+  def place(position, tile)
+    if @tiles[position] || @board.letter_at(position)
+      raise InvalidPlace
+    end
+    @tiles[position] = tile
+    tile
   end
 
   def valid?
     @tiles.any? &&
-      all_on_free_squares? &&
-      distinct_positions? &&
       (all_on_same_row? || all_on_same_column?) &&
       creates_valid_words? &&
       (letters_previously_placed? || covers_centre_square?)
@@ -28,9 +32,10 @@ class Placement
     word_multiplier = 1
     word_tiles.each do |tile|
       letter_multiplier = 1
-      if @tiles.include?(tile)
-        word_multiplier *= @board.word_multiplier_at(tile.position)
-        letter_multiplier = @board.letter_multiplier_at(tile.position)
+      # Multipliers only count for tiles we add
+      if found_at = positions.find { |position| @tiles[position] == tile }
+        word_multiplier *= @board.word_multiplier_at(found_at)
+        letter_multiplier = @board.letter_multiplier_at(found_at)
       end
       letter_score += tile.face_value * letter_multiplier
     end
@@ -38,7 +43,7 @@ class Placement
   end
 
   def resulting_words
-    new_board.words.select { |word_tiles| (word_tiles & @tiles).any? }
+    new_board.words.select { |word_tiles| (word_tiles & @tiles.values).any? }
   end
 
   def covers_centre_square?
@@ -49,24 +54,16 @@ class Placement
     !@board.empty?
   end
 
-  def all_on_free_squares?
-    @tiles.map(&:position).all? { |pos| @board.letter_at(pos).nil?}
-  end
-
   def creates_valid_words?
     new_board.invalid_words.empty?
   end
 
   def new_board
     @board.dup.tap do |new_board|
-      @tiles.each do |tile|
-        new_board.place(tile)
+      @tiles.each do |position, tile|
+        new_board.place(position, tile)
       end
     end
-  end
-
-  def distinct_positions?
-    positions.uniq == positions
   end
 
   def all_on_same_row?
@@ -78,6 +75,6 @@ class Placement
   end
 
   def positions
-    @tiles.map(&:position)
+    @tiles.keys
   end
 end

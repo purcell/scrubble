@@ -4,8 +4,8 @@ RSpec.describe Board do
   let(:dictionary) { Set.new(%w(IT TO DO FIT)) }
   let(:board) { Board.new(dictionary) }
 
-  def place(*placed_tile)
-    board.place(PlacedTile.new(*placed_tile))
+  def place(position, *tileargs)
+    board.place(position, Tile.new(*tileargs))
   end
 
   context "when board is empty" do
@@ -25,7 +25,7 @@ RSpec.describe Board do
     end
 
     it "can have a letter added" do
-      place("A", Position.new(7, 7))
+      place(Position.new(7, 7), "A")
       expect(board.letter_at(Position.new(7, 7))).to eq("A")
     end
 
@@ -38,14 +38,14 @@ RSpec.describe Board do
   context "when duplicating a board" do
     it "doesn't affect the original board when a letter is added to the duplicate" do
       board2 = board.dup
-      board2.place(PlacedTile.new("Z", Position.new(4, 4)))
+      board2.place(Position.new(4, 4), "Z")
       expect(board.letter_at(Position.new(4, 4))).to be_nil
     end
   end
 
   context "when there's a single letter" do
     it "reports that word as invalid" do
-      place("A", Position.new(7, 7))
+      place(Position.new(7, 7), "A")
       expect(board.valid_words).to be_empty
       expect(board.invalid_words).to eq(["A"])
     end
@@ -53,8 +53,8 @@ RSpec.describe Board do
 
   context "when there's an invalid word" do
     it "reports that word as invalid" do
-      place("A", Position.new(7, 7))
-      place("Z", Position.new(8, 7))
+      place(Position.new(7, 7), "A")
+      place(Position.new(8, 7), "Z")
       expect(board.invalid_words).to eq(["AZ"])
       expect(board.valid_words).to be_empty
     end
@@ -62,8 +62,8 @@ RSpec.describe Board do
 
   context "when there's an existing valid word" do
     before do
-      place("I", Position.new(7, 7))
-      place("T", Position.new(8, 7))
+      place(Position.new(7, 7), "I")
+      place(Position.new(8, 7), "T")
     end
 
     it "lists that word as valid" do
@@ -72,13 +72,13 @@ RSpec.describe Board do
     end
 
     it "allows that word to be extended perpendicularly" do
-      place("O", Position.new(8, 8))
+      place(Position.new(8, 8), "O")
       expect(board.valid_words).to eq(%w(IT TO))
       expect(board.invalid_words).to be_empty
     end
 
     it "allows that word to be extended horizontally" do
-      place("F", Position.new(6, 7))
+      place(Position.new(6, 7), "F")
       expect(board.valid_words).to eq(%w(FIT))
       expect(board.invalid_words).to be_empty
     end
