@@ -23,14 +23,18 @@ class GamesController < ApplicationController
 
     def initialize()
       laid_out = Board.new([])
-      laid_out.place(PlacedTile.new("L", Position.new(8, 8)))
-      laid_out.place(PlacedTile.new("O", Position.new(9, 8)))
-      laid_out.place(PlacedTile.new("L", Position.new(10, 8)))
-      laid_out.place(PlacedTile.new("Z", Position.new(11, 8)))
-      laid_out.place(PlacedTile.new("O", Position.new(11, 9), true))
-      laid_out.place(PlacedTile.new("M", Position.new(11, 10)))
-      laid_out.place(PlacedTile.new("G", Position.new(11, 11)))
+      laid_out.place(Position.new(8, 8), Tile.new("L"))
+      laid_out.place(Position.new(9, 8), Tile.new("O"))
+      laid_out.place(Position.new(10, 8), Tile.new("L"))
+      laid_out.place(Position.new(11, 8), Tile.new("Z"))
+      laid_out.place(Position.new(11, 9), Tile.new("O", true))
+      laid_out.place(Position.new(11, 10), Tile.new("M"))
+      laid_out.place(Position.new(11, 11), Tile.new("G"))
       @board = BoardPresenter.new(laid_out)
+    end
+
+    def tray
+      "KITTEH".chars.map { |l| Tile.new(l) } + [nil]
     end
   end
 
