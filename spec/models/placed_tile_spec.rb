@@ -30,4 +30,9 @@ RSpec.describe PlacedTile do
     end
   end
 
+  it "reports when it is blank" do
+    expect(PlacedTile.new("A", position, true)).to be_blank
+    expect(PlacedTile.new("A", position)).to_not be_blank
+  end
+
 end

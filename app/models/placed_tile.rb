@@ -12,6 +12,10 @@ class PlacedTile
     @blank ? 0 : FACE_VALUES.fetch(letter)
   end
 
+  def blank?
+    @blank
+  end
+
   private
 
   FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
