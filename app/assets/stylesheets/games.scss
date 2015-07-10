@@ -2,18 +2,29 @@
 // They will automatically be included in application.css.
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
+body {
+    text-align: center;
+}
+main {
+    margin: auto;
+    padding-top: 15px;
+}
+
 .board {
 }
 
 .board-square {
     background-color: #f1f0d3;
     display: inline-block;
-    width: 34px;
-    height: 34px;
-    border: 1px;
-    border-color: none;
-    border-collapse: collapse;
+    padding: 1px;
+    width: 30px;
+    height: 30px;
     overflow: hidden;
+    border: solid 1px rgba(0,0,0,0);
+}
+
+.board-square.selected {
+    border-color: #000;
 }
 
 .board-square:after {
@@ -65,7 +76,6 @@
     text-align: center;
     line-height: 24px;
     display: block;
-    margin: 2px;
     padding: 2px;
     background: #ddd;
     border: solid 1px #fff;
@@ -87,8 +97,18 @@
     font-size: 8px;
 }
 
+.tray {
+    margin-top: 10px;
+}
+.tray-frame {
+    display: inline-block;
+    background: #888;
+    padding: 2px;
+    border: solid 1px #999;
+}
+
 .tray-square {
-    background-color: #333;
+    background-color: #aaa;
     display: inline-block;
     width: 34px;
     height: 34px;
