@@ -1,60 +1,99 @@
-// global jQuery, document
-jQuery(function(){
-  var SELECTED = "selected";
-
-  var trayLetters = trayTiles().map(function() {
-    return $(this).data('letter');
-  });
+// global window
+(function(m, document, _){
 
   //////////////////////////////////////////////////////////////////////
-  // Event wiring
+  // Models
   //////////////////////////////////////////////////////////////////////
 
-  $(document).on('click', '.board-square:not(:has(".tile"))', function(ev) {
-    squareClicked($(this));
-  });
+  var Game = function(data) {
+    this.board = m.prop(data.board);
+    this.tray = m.prop(data.tray);
+    this.selectedSquare = m.prop(null);
+    var playedTiles = [];
 
-  function squareClicked(square) {
-    var board = square.closest(".board");
-    board.find(".board-square").removeClass(SELECTED);
-    square.addClass(SELECTED);
-  }
+    this.onSelectSquare = function(square) {
+      this.selectedSquare(square);
+    }.bind(this);
 
-  $(document).on('keyup', function(ev) {
-    if (!hasModifier(ev)) {
-      $(".board-square.selected").first().each(function(){
-        var square = $(this);
-        var entered = alphabetChar(ev);
-        if (entered) {
-          if (letterEntered(square, entered)) {
-            square.removeClass(SELECTED);
-          }
-        }
-      });
+    this.onEnterLetter = function(letter) {
+      var square = this.selectedSquare();
+      if (!(square && !square.tile)) {
+        return;
+      }
+      var foundAt = _.findIndex(this.tray(), function(t) { return t && t.letter == letter; });
+      if (foundAt != -1) {
+        var tileToPlay = this.tray()[foundAt];
+        playedTiles.push(tileToPlay);
+        this.tray()[foundAt] = null;
+        square.tile = tileToPlay;
+        this.selectedSquare(null);
+      }
+    }.bind(this);
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  // Components
+  //////////////////////////////////////////////////////////////////////
+
+  var Tile = {
+    view: function(ctrl, tile)  {
+      return m(".tile",
+               {class: tile.blank && 'tile-blank'},
+               [
+                 tile.letter,
+                 m(".tile-face-value", tile.face_value)
+               ]);
+    }
+  };
+
+  var Board = {
+    view: function(ctrl, game) {
+      return m(".board",
+               game.board().rows.map(function(row) {
+                 return m(".board-row",
+                          row.map(function(square) {
+                            return m(".board-square",
+                                     {
+                                       class: [
+                                         "word-multiplier-" + square.word_multiplier,
+                                         "letter-multiplier-" + square.letter_multiplier,
+                                         game.selectedSquare() == square ? "selected" : ""
+                                       ].join(" "),
+                                       onclick: function() { game.onSelectSquare(square); }
+                                     },
+                                     (square.tile && m.component(Tile, square.tile)));
+                          }));
+               }));
+    }
+  };
+
+  var Tray = {
+    view: function(ctrl, game) {
+      return m(".tray",
+               m(".tray-frame",
+                 game.tray().map(function(tile) {
+                   return m(".tray-square", tile && m.component(Tile, tile));
+                 })));
+    }
+  };
+
+  //////////////////////////////////////////////////////////////////////
+  // Set-up
+  //////////////////////////////////////////////////////////////////////
+
+  var game = new Game(JSON.parse(document.getElementById("game").dataset.game));
+
+  m.module(document.getElementById("board"), m.component(Board, game));
+  m.module(document.getElementById("tray"), m.component(Tray, game));
+
+  document.addEventListener("keyup", function(ev) {
+    if (!(ev.metaKey || ev.altKey || ev.ctrlKey) &&
+        ev.key.match(/^[a-zA-Z]$/)) {
+      m.startComputation();
+      game.onEnterLetter(ev.key.toUpperCase());
+      m.endComputation();
+      ev.preventDefault();
     }
   });
 
-  function hasModifier(ev) {
-    return (ev.metaKey || ev.altKey || ev.ctrlKey);
-  }
-
-  function alphabetChar(ev) {
-    return (ev.key.match(/^[a-zA-Z]$/)) ? ev.key.toUpperCase() : null;
-  }
-
-  //////////////////////////////////////////////////////////////////////
-  // Data
-  //////////////////////////////////////////////////////////////////////
-
-  function trayTiles() {
-    return $(".tray-square .tile");
-  }
-
-  //////////////////////////////////////////////////////////////////////
-  // Interactions
-  //////////////////////////////////////////////////////////////////////
-
-  function letterEntered(square, letter) {
-    console.log(letter + " entered at " + square.data("position"));
-  }
-});
+})(window.m, window.document, window._);

@@ -1,16 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Scrubble</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+  <head>
+    <title>Scrubble</title>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+
+    <main>
+      <%= yield %>
+    </main>
+
+  </body>
+  <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/mithril/0.2.0/mithril.min.js" %>
+  <%= javascript_include_tag "https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.0/lodash.min.js" %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <%= csrf_meta_tags %>
-</head>
-<body>
-
-  <main>
-    <%= yield %>
-  </main>
-
-</body>
 </html>

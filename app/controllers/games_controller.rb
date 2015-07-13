@@ -1,19 +1,48 @@
 class GamesController < ApplicationController
 
+  class PositionPresenter
+    def initialize(position)
+      @position = position
+    end
+
+    def as_json(options=nil)
+      { x: @position.x, y: @position.y }
+    end
+  end
+
+  class TilePresenter
+    def initialize(tile)
+      @tile = tile
+    end
+
+    def as_json(options=nil)
+      if @tile
+        { letter: @tile.letter, blank: @tile.blank?, face_value: @tile.face_value }
+      end
+    end
+  end
+
   class BoardPresenter
-    Square = Struct.new(:position, :tile, :word_multiplier, :letter_multiplier)
     def initialize(board)
       @board = board
     end
+
+    def as_json(options=nil)
+      { rows: rows }
+    end
+
+    private
 
     def rows
       (1..15).map do |row|
         (1..15).map do |column|
           pos = Position.new(column, row)
-          Square.new(pos,
-                     @board.tile_at(pos),
-                     @board.word_multiplier_at(pos),
-                     @board.letter_multiplier_at(pos))
+          {
+            position: PositionPresenter.new(pos),
+            tile: TilePresenter.new(@board.tile_at(pos)),
+            word_multiplier: @board.word_multiplier_at(pos),
+            letter_multiplier: @board.letter_multiplier_at(pos)
+          }.stringify_keys
         end
       end
     end
@@ -23,20 +52,26 @@ class GamesController < ApplicationController
     attr_reader :board
 
     def initialize()
-      laid_out = Board.new([])
-      laid_out.place(Position.new(8, 8), Tile.new("L"))
-      laid_out.place(Position.new(9, 8), Tile.new("O"))
-      laid_out.place(Position.new(10, 8), Tile.new("L"))
+      @board = Board.new([])
+      @board.place(Position.new(8, 8), Tile.new("L"))
+      @board.place(Position.new(9, 8), Tile.new("O"))
+      @board.place(Position.new(10, 8), Tile.new("L"))
 
-      laid_out.place(Position.new(11, 8), Tile.new("Z"))
-      laid_out.place(Position.new(11, 9), Tile.new("O", true))
-      laid_out.place(Position.new(11, 10), Tile.new("M"))
-      laid_out.place(Position.new(11, 11), Tile.new("G"))
+      @board.place(Position.new(11, 8), Tile.new("Z"))
+      @board.place(Position.new(11, 9), Tile.new("O", true))
+      @board.place(Position.new(11, 10), Tile.new("M"))
+      @board.place(Position.new(11, 11), Tile.new("G"))
 
-      laid_out.place(Position.new(9, 7), Tile.new("R"))
-      laid_out.place(Position.new(9, 9), Tile.new("F"))
-      laid_out.place(Position.new(9, 10), Tile.new("L"))
-      @board = BoardPresenter.new(laid_out)
+      @board.place(Position.new(9, 7), Tile.new("R"))
+      @board.place(Position.new(9, 9), Tile.new("F"))
+      @board.place(Position.new(9, 10), Tile.new("L"))
+    end
+
+    def as_json(options=nil)
+      {
+        board: BoardPresenter.new(@board),
+        tray: tray.map { |tile| TilePresenter.new(tile) }
+      }
     end
 
     def tray
@@ -45,7 +80,7 @@ class GamesController < ApplicationController
   end
 
   def show
-    @game = GamePresenter.new()
+    @game = GamePresenter.new
   end
 
 end
