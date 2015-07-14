@@ -6,7 +6,7 @@
   // Models
   //////////////////////////////////////////////////////////////////////
 
-  var Game = function(data) {
+  function makeGame(data) {
     var state = _.extend({ selectedSquare: null }, data);
     var playedTiles = [];
 
@@ -57,7 +57,7 @@
       }
     });
     return game;
-  };
+  }
 
   //////////////////////////////////////////////////////////////////////
   // Components
@@ -110,7 +110,7 @@
   // Set-up
   //////////////////////////////////////////////////////////////////////
 
-  var game = new Game(JSON.parse(document.getElementById("game").dataset.game));
+  var game = makeGame(JSON.parse(document.getElementById("game").dataset.game));
 
   m.module(document.querySelector("#board"), m.component(Board, game));
   m.module(document.querySelector("#tray"), m.component(Tray, game));
