@@ -16,28 +16,30 @@
       });
     }
 
+    function readLetter() {
+      var letter = prompt("Which letter?");
+      return letter.match(/^[a-zA-Z]$/) ? letter.toUpperCase() : null;
+    }
+
     var game = _.extend(state, {
       selectSquare: function(square) {
         state.selectedSquare = square;
       },
 
-      enterLetter: function(letter) {
+      playTile: function(tileToPlay) {
         var square = state.selectedSquare;
         if (!(square && !square.tile)) {
           return;
         }
-        var foundAt = _.findIndex(state.tray, function(t) { return t && !t.blank && t.letter == letter; });
-        if (foundAt == -1)
-          foundAt = _.findIndex(state.tray, function(t) { return t && t.blank; });
-        if (foundAt != -1) {
-          var tileToPlay = state.tray[foundAt];
-          if (tileToPlay.blank)
-            tileToPlay.letter = letter;
-          playedTiles.push(tileToPlay);
-          state.tray[foundAt] = null;
-          square.tile = tileToPlay;
-          state.selectedSquare = null;
+        if (tileToPlay.blank) {
+          var letter = readLetter();
+          if (!letter) return;
+          tileToPlay.letter = letter;
         }
+        playedTiles.push(tileToPlay);
+        state.tray[_.indexOf(state.tray, tileToPlay)] = null;
+        square.tile = tileToPlay;
+        state.selectedSquare = null;
       },
 
       replaceTile: function(tile) {
@@ -100,7 +102,9 @@
       return [m(".tray",
                 m(".tray-frame",
                   game.tray.map(function(tile) {
-                    return m(".tray-square", tile && m.component(Tile, tile));
+                    return m(".tray-square",
+                             { onclick: function() { game.playTile(tile); } },
+                             tile && m.component(Tile, tile));
                   }))),
               m("a", { href: '#', onclick: game.replaceTiles }, "Replace tiles")];
     }
@@ -114,15 +118,5 @@
 
   m.module(document.querySelector("#board"), m.component(Board, game));
   m.module(document.querySelector("#tray"), m.component(Tray, game));
-
-  document.addEventListener("keyup", function(ev) {
-    if (!(ev.metaKey || ev.altKey || ev.ctrlKey) &&
-        ev.key.match(/^[a-zA-Z]$/)) {
-      m.startComputation();
-      game.enterLetter(ev.key.toUpperCase());
-      m.endComputation();
-      ev.preventDefault();
-    }
-  });
 
 })(window.m, window.document, window._);
