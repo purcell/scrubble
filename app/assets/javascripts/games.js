@@ -83,8 +83,8 @@
 
   var game = new Game(JSON.parse(document.getElementById("game").dataset.game));
 
-  m.module(document.getElementById("board"), m.component(Board, game));
-  m.module(document.getElementById("tray"), m.component(Tray, game));
+  m.module(document.querySelector("#board"), m.component(Board, game));
+  m.module(document.querySelector("#tray"), m.component(Tray, game));
 
   document.addEventListener("keyup", function(ev) {
     if (!(ev.metaKey || ev.altKey || ev.ctrlKey) &&
