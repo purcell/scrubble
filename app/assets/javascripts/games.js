@@ -60,7 +60,7 @@
         playedTiles.forEach(replaceTile);
       },
 
-      tileClicked: function(tile) {
+      toggleTile: function(tile) {
         if (_.include(playedTiles, tile)) {
           replaceTile(tile);
           return true;
@@ -79,12 +79,31 @@
   // Components
   //////////////////////////////////////////////////////////////////////
 
+  var Game = {
+    controller: function(game) {
+    },
+    view: function(ctrl, game) {
+      return m(".game",
+               [
+                 m.component(Board, game),
+                 m.component(Tray, game)
+               ]
+              );
+    }
+  };
+
   var Tile = {
+    controller: function(ctrl, tile, showIfBlank) {
+      self.clicked = function(ev) {
+        if (game.toggleTile(tile))
+          ev.preventDefault();
+      };
+    },
     view: function(ctrl, tile, showIfBlank)  {
       return m(".tile",
                {
                  class: tile.blank && 'tile-blank',
-                 onclick: function(ev) { if (game.tileClicked(tile)) ev.preventDefault(); }
+                 onclick: function(ev) { if (game.toggleTile(tile)) ev.preventDefault(); }
                },
                [
                  (!tile.blank || showIfBlank) ? tile.letter : " ",
@@ -116,12 +135,15 @@
 
   var Tray = {
     view: function(ctrl, game) {
-      return [m(".tray",
-                m(".tray-frame",
-                  game.tray.map(function(tile) {
-                    return m(".tray-square", tile && m.component(Tile, tile));
-                  }))),
-              m("a", { href: '#', onclick: game.replaceTiles }, "Replace tiles")];
+      return m(".tray",
+               [
+                 m(".tray-frame",
+                   game.tray.map(function(tile) {
+                     return m(".tray-square", tile && m.component(Tile, tile));
+                   })),
+                 m("p",
+                   m("a", { href: '#', onclick: game.replaceTiles }, "Replace tiles"))
+               ]);
     }
   };
 
@@ -131,7 +153,6 @@
 
   var game = makeGame(JSON.parse(document.getElementById("game").dataset.game));
 
-  m.module(document.querySelector("#board"), m.component(Board, game));
-  m.module(document.querySelector("#tray"), m.component(Tray, game));
+  m.module(document.querySelector("#game"), m.component(Game, game));
 
 })(window.m, window.document, window._);
