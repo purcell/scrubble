@@ -6,27 +6,27 @@
   //////////////////////////////////////////////////////////////////////
 
   var Game = function(data) {
-    this.board = m.prop(data.board);
-    this.tray = m.prop(data.tray);
-    this.selectedSquare = m.prop(null);
+    this.board = data.board;
+    this.tray = data.tray;
+    this.selectedSquare = null;
     var playedTiles = [];
 
     this.onSelectSquare = function(square) {
-      this.selectedSquare(square);
+      this.selectedSquare = square;
     }.bind(this);
 
     this.onEnterLetter = function(letter) {
-      var square = this.selectedSquare();
+      var square = this.selectedSquare;
       if (!(square && !square.tile)) {
         return;
       }
-      var foundAt = _.findIndex(this.tray(), function(t) { return t && t.letter == letter; });
+      var foundAt = _.findIndex(this.tray, function(t) { return t && t.letter == letter; });
       if (foundAt != -1) {
-        var tileToPlay = this.tray()[foundAt];
+        var tileToPlay = this.tray[foundAt];
         playedTiles.push(tileToPlay);
-        this.tray()[foundAt] = null;
+        this.tray[foundAt] = null;
         square.tile = tileToPlay;
-        this.selectedSquare(null);
+        this.selectedSquare = null;
       }
     }.bind(this);
   };
@@ -49,7 +49,7 @@
   var Board = {
     view: function(ctrl, game) {
       return m(".board",
-               game.board().rows.map(function(row) {
+               game.board.rows.map(function(row) {
                  return m(".board-row",
                           row.map(function(square) {
                             return m(".board-square",
@@ -57,7 +57,7 @@
                                        class: [
                                          "word-multiplier-" + square.word_multiplier,
                                          "letter-multiplier-" + square.letter_multiplier,
-                                         game.selectedSquare() == square ? "selected" : ""
+                                         game.selectedSquare == square ? "selected" : ""
                                        ].join(" "),
                                        onclick: function() { game.onSelectSquare(square); }
                                      },
@@ -71,7 +71,7 @@
     view: function(ctrl, game) {
       return m(".tray",
                m(".tray-frame",
-                 game.tray().map(function(tile) {
+                 game.tray.map(function(tile) {
                    return m(".tray-square", tile && m.component(Tile, tile));
                  })));
     }
