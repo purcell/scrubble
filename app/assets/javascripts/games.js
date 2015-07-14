@@ -7,11 +7,29 @@
   //////////////////////////////////////////////////////////////////////
 
   function makeGame(data) {
-    var state = _.extend({ selectedSquare: null }, data);
-    var playedTiles = [];
+    var game = {
+      selectedSquare: null,
+      playedTiles: [],
+
+      selectSquare: function(square) {
+        if (!square.tile) {
+          game.selectedSquare = square;
+        }
+      },
+
+      replaceTiles: function() {
+        playedTiles.forEach(replaceTile);
+      },
+
+      toggleTile: function(tile) {
+        return replaceTile(tile) || placeTile(tile);
+      }
+    };
+
+    return _.extend(game, data);
 
     function mapSquares(f) {
-      state.board.rows.forEach(function(row) {
+      game.board.rows.forEach(function(row) {
         row.forEach(f);
       });
     }
@@ -22,8 +40,8 @@
     }
 
     function placeTile(tileToPlace) {
-      var square = state.selectedSquare;
-      if (!(square && !square.tile)) {
+      var square = game.selectedSquare;
+      if (!(square && !square.tile && _.include(game.tray, tileToPlace))) {
         return;
       }
       if (tileToPlace.blank) {
@@ -31,48 +49,25 @@
         if (!letter) return;
         tileToPlace.letter = letter;
       }
-      playedTiles.push(tileToPlace);
-      state.tray[_.indexOf(state.tray, tileToPlace)] = null;
+      game.playedTiles.push(tileToPlace);
+      game.tray[_.indexOf(game.tray, tileToPlace)] = null;
       square.tile = tileToPlace;
-      state.selectedSquare = null;
+      game.selectedSquare = null;
+      return true;
     }
 
     function replaceTile(tile) {
-      if (_.include(playedTiles, tile)) {
+      if (_.include(game.playedTiles, tile)) {
         mapSquares(function(square) {
           if (square.tile == tile) {
             square.tile = null;
-            playedTiles = _.without(playedTiles, tile);
-            state.tray[_.indexOf(state.tray, null)] = tile;
+            game.playedTiles = _.without(game.playedTiles, tile);
+            game.tray[_.indexOf(game.tray, null)] = tile;
           }
         });
+        return true;
       }
     }
-
-    var game = _.extend(state, {
-      selectSquare: function(square) {
-        if (!square.tile) {
-          state.selectedSquare = square;
-        }
-      },
-
-      replaceTiles: function() {
-        playedTiles.forEach(replaceTile);
-      },
-
-      toggleTile: function(tile) {
-        if (_.include(playedTiles, tile)) {
-          replaceTile(tile);
-          return true;
-        } else if (_.include(state.tray, tile)) {
-          placeTile(tile);
-          return true;
-        } else {
-          return false;
-        }
-      }
-    });
-    return game;
   }
 
   //////////////////////////////////////////////////////////////////////
