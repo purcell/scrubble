@@ -26,9 +26,13 @@
         if (!(square && !square.tile)) {
           return;
         }
-        var foundAt = _.findIndex(state.tray, function(t) { return t && t.letter == letter; });
+        var foundAt = _.findIndex(state.tray, function(t) { return t && !t.blank && t.letter == letter; });
+        if (foundAt == -1)
+          foundAt = _.findIndex(state.tray, function(t) { return t && t.blank; });
         if (foundAt != -1) {
           var tileToPlay = state.tray[foundAt];
+          if (tileToPlay.blank)
+            tileToPlay.letter = letter;
           playedTiles.push(tileToPlay);
           state.tray[foundAt] = null;
           square.tile = tileToPlay;
@@ -60,11 +64,11 @@
   //////////////////////////////////////////////////////////////////////
 
   var Tile = {
-    view: function(ctrl, tile)  {
+    view: function(ctrl, tile, showIfBlank)  {
       return m(".tile",
                {class: tile.blank && 'tile-blank'},
                [
-                 tile.letter,
+                 (!tile.blank || showIfBlank) ? tile.letter : " ",
                  m(".tile-face-value", tile.face_value)
                ]);
     }
@@ -85,7 +89,7 @@
                                        ].join(" "),
                                        onclick: function() { game.selectSquare(square); }
                                      },
-                                     (square.tile && m.component(Tile, square.tile)));
+                                     (square.tile && m.component(Tile, square.tile, true)));
                           }));
                }));
     }

@@ -2,7 +2,9 @@ class Tile
   attr_reader :letter
 
   def initialize(letter, blank=false)
-    raise(ArgumentError, "invalid letter #{letter}") unless ('A'..'Z').include?(letter)
+    if !('A'..'Z').include?(letter) && !(blank && letter.nil?)
+      raise(ArgumentError, "invalid letter #{letter}")
+    end
     @letter = letter
     @blank = blank
   end

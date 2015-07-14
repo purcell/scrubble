@@ -14,6 +14,10 @@ RSpec.describe Tile do
     end
   end
 
+  it "allows blanks" do
+    expect { Tile.new(nil, true) }.not_to raise_error
+  end
+
   it "reports its face value" do
     ("AEILNORSTU".chars.map { |l| [l, 1] } +
      "DG".chars.map         { |l| [l, 2] } +

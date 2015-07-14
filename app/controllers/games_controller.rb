@@ -75,7 +75,7 @@ class GamesController < ApplicationController
     end
 
     def tray
-      "KITTEH".chars.map { |l| Tile.new(l) } + [nil]
+      "KITEH".chars.map { |l| Tile.new(l) } + [Tile.new(nil, true), nil]
     end
   end
 
