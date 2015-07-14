@@ -7,29 +7,52 @@
   //////////////////////////////////////////////////////////////////////
 
   var Game = function(data) {
-    this.board = data.board;
-    this.tray = data.tray;
-    this.selectedSquare = null;
+    var state = _.extend({ selectedSquare: null }, data);
     var playedTiles = [];
 
-    this.onSelectSquare = function(square) {
-      this.selectedSquare = square;
-    }.bind(this);
+    function mapSquares(f) {
+      state.board.rows.forEach(function(row) {
+        row.forEach(f);
+      });
+    }
 
-    this.onEnterLetter = function(letter) {
-      var square = this.selectedSquare;
-      if (!(square && !square.tile)) {
-        return;
+    var game = _.extend(state, {
+      selectSquare: function(square) {
+        state.selectedSquare = square;
+      },
+
+      enterLetter: function(letter) {
+        var square = state.selectedSquare;
+        if (!(square && !square.tile)) {
+          return;
+        }
+        var foundAt = _.findIndex(state.tray, function(t) { return t && t.letter == letter; });
+        if (foundAt != -1) {
+          var tileToPlay = state.tray[foundAt];
+          playedTiles.push(tileToPlay);
+          state.tray[foundAt] = null;
+          square.tile = tileToPlay;
+          state.selectedSquare = null;
+        }
+      },
+
+      replaceTile: function(tile) {
+        if (_.include(playedTiles, tile)) {
+          mapSquares(function(square) {
+            if (square.tile == tile) {
+              square.tile = null;
+              playedTiles = _.without(playedTiles, tile);
+              state.tray[_.indexOf(state.tray, null)] = tile;
+            }
+          });
+        }
+      },
+
+      replaceTiles: function() {
+        playedTiles.forEach(game.replaceTile);
       }
-      var foundAt = _.findIndex(this.tray, function(t) { return t && t.letter == letter; });
-      if (foundAt != -1) {
-        var tileToPlay = this.tray[foundAt];
-        playedTiles.push(tileToPlay);
-        this.tray[foundAt] = null;
-        square.tile = tileToPlay;
-        this.selectedSquare = null;
-      }
-    }.bind(this);
+    });
+    return game;
   };
 
   //////////////////////////////////////////////////////////////////////
@@ -60,7 +83,7 @@
                                          "letter-multiplier-" + square.letter_multiplier,
                                          game.selectedSquare == square ? "selected" : ""
                                        ].join(" "),
-                                       onclick: function() { game.onSelectSquare(square); }
+                                       onclick: function() { game.selectSquare(square); }
                                      },
                                      (square.tile && m.component(Tile, square.tile)));
                           }));
@@ -70,11 +93,12 @@
 
   var Tray = {
     view: function(ctrl, game) {
-      return m(".tray",
-               m(".tray-frame",
-                 game.tray.map(function(tile) {
-                   return m(".tray-square", tile && m.component(Tile, tile));
-                 })));
+      return [m(".tray",
+                m(".tray-frame",
+                  game.tray.map(function(tile) {
+                    return m(".tray-square", tile && m.component(Tile, tile));
+                  }))),
+              m("a", { href: '#', onclick: game.replaceTiles }, "Replace tiles")];
     }
   };
 
@@ -91,7 +115,7 @@
     if (!(ev.metaKey || ev.altKey || ev.ctrlKey) &&
         ev.key.match(/^[a-zA-Z]$/)) {
       m.startComputation();
-      game.onEnterLetter(ev.key.toUpperCase());
+      game.enterLetter(ev.key.toUpperCase());
       m.endComputation();
       ev.preventDefault();
     }
