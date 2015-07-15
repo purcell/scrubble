@@ -37,4 +37,22 @@ RSpec.describe Tile do
     expect(Tile.new("A")).to_not be_blank
   end
 
+  context "when comparing tiles" do
+    it "reports identical tiles as equal" do
+      expect(Tile.new("A")).to eq(Tile.new("A"))
+    end
+
+    it "reports different tiles as unequal" do
+      expect(Tile.new("A")).not_to eq(Tile.new("B"))
+    end
+
+    it "reports blank tiles as unequal to non-blank tiles" do
+      expect(Tile.new("A")).not_to eq(Tile.new("A", true))
+    end
+
+    it "reports blank tiles as equal to other blanks with letters set" do
+      expect(Tile.new("A", true)).to eq(Tile.new(nil, true))
+    end
+  end
+
 end

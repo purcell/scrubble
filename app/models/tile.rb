@@ -17,6 +17,12 @@ class Tile
     @blank
   end
 
+  def ==(other)
+    (self.class === other) &&
+      (blank? == other.blank?) &&
+      (blank? || (letter == other.letter))
+  end
+
   private
 
   FACE_VALUES = Hash["AEILNORSTU".chars.map { |l| [l, 1] } +
