@@ -65,4 +65,29 @@ RSpec.describe Bag do
     end
   end
 
+  describe "drawing letters as tiles"  do
+    it "allows drawing singly" do
+      bag = Bag.new("A")
+      expect(bag.draw_tile).to eq(Tile.new("A"))
+      expect(bag).to be_empty
+    end
+
+    it "allows drawing blanks singly" do
+      expect(Bag.new(" ").draw_tile).to eq(Tile.new(nil, true))
+    end
+
+    it "handles drawing when empty" do
+      expect(Bag.new("").draw_tile).to be_nil
+    end
+
+    context "when drawing multiple tiles" do
+      it "returns a subset" do
+        expect(Bag.new("ABC").draw_tiles(2)).to eq([Tile.new("A"), Tile.new("B")])
+      end
+
+      it "can partially fulfill the draw" do
+        expect(Bag.new("A").draw_tiles(2)).to eq([Tile.new("A")])
+      end
+    end
+  end
 end

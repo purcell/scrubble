@@ -9,6 +9,17 @@ class Bag
     @letters.shift
   end
 
+  def draw_tile
+    if letter = draw
+      blank = (letter == ' ')
+      Tile.new((letter unless blank), blank)
+    end
+  end
+
+  def draw_tiles(n)
+    n.times.map { draw_tile }.compact
+  end
+
   def empty?
     size == 0
   end
