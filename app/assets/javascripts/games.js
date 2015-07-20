@@ -2,15 +2,25 @@
 (function(m, document, _){
   "use strict";
 
+  var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').attributes.content.value;
+
+  var XHR_CONFIG = function(xhr) {
+    xhr.setRequestHeader('X-CSRF-Token', CSRF_TOKEN);
+  };
+
+  function makeErrorHandler(actionDescription) {
+    return function(response) {
+      alert("Error " + actionDescription +
+            (response && response.errors ? ":\n" + response.errors.join("\n") : ''));
+    };
+  }
+
   //////////////////////////////////////////////////////////////////////
   // Models
   //////////////////////////////////////////////////////////////////////
 
-  function makeGame(data) {
+  function makeGame(initial) {
     var game = {
-      selectedSquare: null,
-      playedTiles: [],
-
       selectSquare: function(square) {
         if (!square.tile) {
           game.selectedSquare = square;
@@ -18,20 +28,34 @@
       },
 
       replaceTiles: function() {
-        playedTiles.forEach(replaceTile);
+        game.placedTiles.forEach(replaceTile);
       },
 
       toggleTile: function(tile) {
         return replaceTile(tile) || placeTile(tile);
+      },
+
+      submitPlacedTiles: function() {
+        var data = _.compact(_.map(allSquares(), (function(sq) {
+          if(_.include(game.placedTiles, sq.tile)) {
+            return { x: sq.position.x, y: sq.position.y,
+                     letter: sq.tile.letter, blank: sq.tile.blank };
+          }
+        })));
+        m.request({ method: "POST", url: "/games/placements",
+                    data: { placements: data }, config: XHR_CONFIG })
+          .then(updateGame, makeErrorHandler("submitting placement"));
       }
     };
 
-    return _.extend(game, data);
+    return updateGame(initial);
 
-    function mapSquares(f) {
-      game.board.rows.forEach(function(row) {
-        row.forEach(f);
-      });
+    function updateGame(data) {
+      return _.extend(game, { selectedSquare: null, placedTiles: [] }, data);
+    }
+
+    function allSquares() {
+      return _.flatten(game.board.rows);
     }
 
     function readLetter() {
@@ -41,27 +65,26 @@
 
     function placeTile(tileToPlace) {
       var square = game.selectedSquare;
-      if (!(square && !square.tile && _.include(game.tray, tileToPlace))) {
-        return;
+      if (square && !square.tile && _.include(game.tray, tileToPlace)) {
+        if (tileToPlace.blank) {
+          var letter = readLetter();
+          if (!letter) return;
+          tileToPlace.letter = letter;
+        }
+        game.placedTiles.push(tileToPlace);
+        game.tray[_.indexOf(game.tray, tileToPlace)] = null;
+        square.tile = tileToPlace;
+        game.selectedSquare = null;
+        return true;
       }
-      if (tileToPlace.blank) {
-        var letter = readLetter();
-        if (!letter) return;
-        tileToPlace.letter = letter;
-      }
-      game.playedTiles.push(tileToPlace);
-      game.tray[_.indexOf(game.tray, tileToPlace)] = null;
-      square.tile = tileToPlace;
-      game.selectedSquare = null;
-      return true;
     }
 
     function replaceTile(tile) {
-      if (_.include(game.playedTiles, tile)) {
-        mapSquares(function(square) {
+      if (_.include(game.placedTiles, tile)) {
+        allSquares().map(function(square) {
           if (square.tile == tile) {
             square.tile = null;
-            game.playedTiles = _.without(game.playedTiles, tile);
+            game.placedTiles = _.without(game.placedTiles, tile);
             game.tray[_.indexOf(game.tray, null)] = tile;
           }
         });
@@ -81,7 +104,8 @@
       return m(".game",
                [
                  m.component(Board, game),
-                 m.component(Tray, game)
+                 m.component(Tray, game),
+                 m(".score", ["Your score is ", m("strong", game.score)])
                ]
               );
     }
@@ -130,6 +154,7 @@
 
   var Tray = {
     view: function(ctrl, game) {
+      var anyPlaced = (game.placedTiles.length !== 0);
       return m(".tray",
                [
                  m(".tray-frame",
@@ -137,7 +162,13 @@
                      return m(".tray-square", tile && m.component(Tile, tile));
                    })),
                  m("p",
-                   m("a", { href: '#', onclick: game.replaceTiles }, "Replace tiles"))
+                   [
+                     m("button", { href: '#', onclick: game.replaceTiles,
+                                   disabled: !anyPlaced }, "Clear play"),
+                     m("button", { href: '#', onclick: game.submitPlacedTiles,
+                                   disabled: !anyPlaced }, "Play tiles")
+                   ]
+                  )
                ]);
     }
   };

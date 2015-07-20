@@ -25,6 +25,18 @@ class Placement
     resulting_words.map(&method(:score_word)).inject(0, &:+)
   end
 
+  def new_board
+    @board.dup.tap do |new_board|
+      @tiles.each do |position, tile|
+        new_board.place(position, tile)
+      end
+    end
+  end
+
+  def tiles
+    @tiles.values
+  end
+
   private
 
   def score_word(word_tiles)
@@ -56,14 +68,6 @@ class Placement
 
   def creates_valid_words?
     new_board.invalid_words.empty?
-  end
-
-  def new_board
-    @board.dup.tap do |new_board|
-      @tiles.each do |position, tile|
-        new_board.place(position, tile)
-      end
-    end
   end
 
   def all_on_same_row?
