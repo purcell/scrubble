@@ -3,6 +3,7 @@
 // You can use Sass (SCSS) here: http://sass-lang.com/
 
 body {
+    box-sizing: border-box;
     text-align: center;
 }
 main {
@@ -17,9 +18,9 @@ main {
     height: 36px;
 }
 
-.board-square {
+@mixin square($bgcolour) {
     position: relative;
-    background-color: #f1f0d3;
+    background-color: $bgcolour;
     display: inline-block;
     padding: 1px;
     margin: 0 1px;
@@ -27,6 +28,10 @@ main {
     height: 30px;
     overflow: hidden;
     border: solid 1px rgba(0,0,0,0);
+}
+
+.board-square {
+    @include square(#f1f0d3);
 }
 
 .board-square.selected {
@@ -114,14 +119,6 @@ main {
 }
 
 .tray-square {
-    background-color: #aaa;
-    display: inline-block;
-    margin: 0 1px;
-    width: 30px;
-    height: 30px;
-    border: 1px;
-    border-color: none;
-    border-collapse: collapse;
-    overflow: hidden;
+    @include square(#aaa);
 }
 
