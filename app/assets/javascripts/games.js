@@ -42,8 +42,8 @@
                      letter: sq.tile.letter, blank: sq.tile.blank };
           }
         })));
-        m.request({ method: "POST", url: "/games/placements",
-                    data: { placements: data }, config: XHR_CONFIG })
+        m.request({ method: "POST", url: "/games/" + game.game_id + "/placements",
+                    data: { played_tiles: data }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("submitting placement"));
       }
     };
