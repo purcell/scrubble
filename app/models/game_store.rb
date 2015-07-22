@@ -11,7 +11,7 @@ module GameStore
     end
   end
 
-  def self.save_placement!(game_id, played_tiles, player_name)
+  def self.save_placement!(game_id, player_name, played_tiles)
     Storage::Game.find(game_id).tap do |game|
       game.turns.create!(
         player_name: player_name,
