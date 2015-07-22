@@ -19,11 +19,15 @@
   // Models
   //////////////////////////////////////////////////////////////////////
 
+  function combineClasses(classes) {
+    return _.compact(classes).join(" ");
+  }
+
   function makeGame(initial) {
     var game = {
-      selectSquare: function(square) {
+      selectBoardSquare: function(square) {
         if (!square.tile) {
-          game.selectedSquare = square;
+          maybePlaySelectedTile(square);
         }
       },
 
@@ -32,7 +36,7 @@
       },
 
       toggleTile: function(tile) {
-        return replaceTile(tile) || placeTile(tile);
+        return replaceTile(tile) || toggleSelectTrayTile(tile);
       },
 
       submitPlacedTiles: function() {
@@ -51,7 +55,26 @@
     return updateGame(initial);
 
     function updateGame(data) {
-      return _.extend(game, { selectedSquare: null, placedTiles: [] }, data);
+      return _.extend(game, {
+        placedTiles: [],
+        selectedTrayTiles: []
+      }, data);
+    }
+
+    function maybePlaySelectedTile(square) {
+      if (game.selectedTrayTiles.length == 1) {
+        placeTile(game.selectedTrayTiles[0], square);
+        return true;
+      }
+      return false;
+    }
+
+    function toggleSelectTrayTile(tile) {
+      if (_.include(game.selectedTrayTiles, tile)) {
+        _.remove(game.selectedTrayTiles, tile);
+      } else {
+        game.selectedTrayTiles.push(tile);
+      }
     }
 
     function allSquares() {
@@ -63,8 +86,7 @@
       return letter.match(/^[a-zA-Z]$/) ? letter.toUpperCase() : null;
     }
 
-    function placeTile(tileToPlace) {
-      var square = game.selectedSquare;
+    function placeTile(tileToPlace, square) {
       if (square && !square.tile && _.include(game.tray, tileToPlace)) {
         if (tileToPlace.blank) {
           var letter = readLetter();
@@ -74,7 +96,8 @@
         game.placedTiles.push(tileToPlace);
         game.tray[_.indexOf(game.tray, tileToPlace)] = null;
         square.tile = tileToPlace;
-        game.selectedSquare = null;
+        game.selectedBoardSquare = null;
+        game.selectedTrayTiles = [];
         return true;
       }
     }
@@ -112,17 +135,14 @@
   };
 
   var Tile = {
-    controller: function(ctrl, tile, showIfBlank) {
-      self.clicked = function(ev) {
-        if (game.toggleTile(tile))
-          ev.preventDefault();
-      };
-    },
-    view: function(ctrl, tile, showIfBlank)  {
+    view: function(ctrl, tile, selected, showIfBlank)  {
       return m(".tile",
                {
-                 class: tile.blank && 'tile-blank',
-                 onclick: function(ev) { if (game.toggleTile(tile)) ev.preventDefault(); }
+                 class: combineClasses([
+                   tile.blank && 'tile-blank',
+                   selected && 'selected'
+                 ]),
+                 onclick: function(ev) { game.toggleTile(tile); ev.preventDefault(); }
                },
                [
                  (!tile.blank || showIfBlank) ? tile.letter : " ",
@@ -139,14 +159,13 @@
                           row.map(function(square) {
                             return m(".board-square",
                                      {
-                                       class: [
+                                       class: combineClasses([
                                          "word-multiplier-" + square.word_multiplier,
-                                         "letter-multiplier-" + square.letter_multiplier,
-                                         game.selectedSquare == square ? "selected" : ""
-                                       ].join(" "),
-                                       onclick: _.wrap(square, game.selectSquare)
+                                         "letter-multiplier-" + square.letter_multiplier
+                                       ]),
+                                       onclick: _.wrap(square, game.selectBoardSquare)
                                      },
-                                     (square.tile && m.component(Tile, square.tile, true)));
+                                     (square.tile && m.component(Tile, square.tile, false, true)));
                           }));
                }));
     }
@@ -159,7 +178,7 @@
                [
                  m(".tray-frame",
                    game.tray.map(function(tile) {
-                     return m(".tray-square", tile && m.component(Tile, tile));
+                     return m(".tray-square", tile && m.component(Tile, tile, _.include(game.selectedTrayTiles, tile)));
                    })),
                  m("p",
                    [

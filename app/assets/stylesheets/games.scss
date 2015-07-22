@@ -122,3 +122,6 @@ main {
     @include square(#aaa);
 }
 
+.tile.selected {
+    background: #eee;
+}
