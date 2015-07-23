@@ -49,6 +49,12 @@
         m.request({ method: "POST", url: "/games/" + game.game_id + "/placements",
                     data: { played_tiles: data }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("submitting placement"));
+      },
+
+      swapTiles: function() {
+        m.request({ method: "POST", url: ("/games/" + game.game_id + "/tileswaps"),
+                    data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
+          .then(updateGame, makeErrorHandler("swapping tiles"));
       }
     };
 
@@ -174,6 +180,7 @@
   var Tray = {
     view: function(ctrl, game) {
       var anyPlaced = (game.placedTiles.length !== 0);
+      var anySelected = (game.selectedTrayTiles.length !== 0);
       return m(".tray",
                [
                  m(".tray-frame",
@@ -185,7 +192,9 @@
                      m("button", { href: '#', onclick: game.replaceTiles,
                                    disabled: !anyPlaced }, "Clear play"),
                      m("button", { href: '#', onclick: game.submitPlacedTiles,
-                                   disabled: !anyPlaced }, "Play tiles")
+                                   disabled: !anyPlaced }, "Play tiles"),
+                     m("button", { href: '#', onclick: game.swapTiles,
+                                   disabled: !anySelected }, "Swap tiles")
                    ]
                   )
                ]);

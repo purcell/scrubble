@@ -20,6 +20,10 @@ class Bag
     n.times.map { draw_tile }.compact
   end
 
+  def replace_tiles(tiles)
+    @letters += tiles.map { |t| t.blank? ? " " : t.letter }
+  end
+
   def empty?
     size == 0
   end

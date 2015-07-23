@@ -32,4 +32,42 @@ RSpec.describe Tray do
     end
   end
 
+  describe "swapping tiles" do
+    let(:tiles) { [
+                    Tile.new("A"), Tile.new("B"), Tile.new("B", true),
+                    Tile.new("C"), Tile.new("D"), Tile.new("E"), Tile.new("F")
+                  ] }
+    let(:tray) { Tray.new(tiles) }
+
+    context "when the bag is nearly empty" do
+      let(:bag) { Bag.new("LMNOPQ") }
+
+      it "refuses to swap even zero tiles" do
+        expect(tray.swap_tiles(bag, [])).to eq(false)
+        expect(tray.tiles).to eq(tiles)
+        expect(bag).to eq(bag)
+      end
+
+      it "refuses to swap one tile" do
+        expect(tray.swap_tiles(bag, [Tile.new("A")])).to eq(false)
+        expect(tray.tiles).to eq(tiles)
+        expect(bag).to eq(bag)
+      end
+    end
+
+    context "when there are plenty of tiles" do
+      let(:bag) { Bag.new("LMNOPQR") }
+
+      it "does nothing if there are no tiles to swap" do
+        expect { tray.swap_tiles(bag, []) }.to_not change { tray.tiles }
+      end
+
+      it "swaps the given tiles" do
+        expect(tray.swap_tiles(bag, tiles.first(2))).to eq(true)
+        expect(tray.tiles).to eq(tiles[2..-1] + [Tile.new("L"), Tile.new("M")])
+      end
+    end
+
+  end
+
 end

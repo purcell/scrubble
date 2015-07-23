@@ -19,5 +19,8 @@
     - A tile action identifies a tile to be replaced, and optionally a board position
 
 * Remaining work
-** TODO Persist a game beyond one turn
+** DONE Persist a game beyond one turn
+** DONE Support swapping out tiles
+** TODO Shuffle swapped tiles back into the bag randomly
 ** TODO Provide more detailed feedback when placements are invalid (spelling vs. legal positions)
+** TODO Board shouldn't need to know about the dictionary

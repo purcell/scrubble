@@ -10,11 +10,8 @@ class PlayTiles
   def call
     # TODO: locking
     @game = GameStore.load!(@game_id)
-    @game.apply_placement(@player_name, @played_tiles).tap do |valid|
-      if valid
-        GameStore.save_placement!(@game_id, @player_name, @played_tiles)
-      end
-    end
+    @game.apply_placement(@player_name, @played_tiles) &&
+      GameStore.save_placement!(@game_id, @player_name, @played_tiles)
   end
 end
 

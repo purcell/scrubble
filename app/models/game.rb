@@ -4,14 +4,14 @@ class Game
   attr_reader :trays
   attr_reader :bag
 
-  def initialize(bag, player_names)
+  def initialize(bag, player_names, dictionary)
+    @board = Board.new(dictionary)
     @bag = bag
     @scores = Hash.new(0)
     @trays = {}
     player_names.each do |name|
       @trays[name] = Tray.new(bag.draw_tiles(7))
     end
-    @board = Board.new(['ROFL', 'ZOMG', 'LOLZ', 'GET', 'KIT', 'HOT', 'ROOF'])
   end
 
   def apply_placement(player_name, played_tiles)
@@ -27,5 +27,11 @@ class Game
     else
       false
     end
+  end
+
+  def swap_tiles(player_name, tiles)
+    return false if bag.size < tiles.size
+    @trays[player_name].swap_tiles(bag, tiles)
+    true
   end
 end
