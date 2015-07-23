@@ -14,7 +14,7 @@ class Game
     end
   end
 
-  def apply_placement(player_name, played_tiles)
+  def play_tiles(player_name, played_tiles)
     placement = Placement.new(@board)
     played_tiles.each do |pos, tile|
       placement.place(pos, tile)

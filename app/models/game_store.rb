@@ -20,7 +20,7 @@ module GameStore
         tiles[Position.new(tile_use.x, tile_use.y)] = Tile.new(tile_use.letter, tile_use.blank?)
       end
       if played_tiles.any?
-        game.apply_placement(turn.player_name, played_tiles)
+        game.play_tiles(turn.player_name, played_tiles)
       end
       swapped_tiles = turn.tile_swaps.map do |tile|
         Tile.new(tile.letter, tile.blank?)
@@ -53,7 +53,7 @@ module GameStore
       @game_record = game_record
     end
 
-    def apply_placement(player_name, played_tiles)
+    def play_tiles(player_name, played_tiles)
       @game_record.turns.create!(
         player_name: player_name,
         tile_uses: played_tiles.map do |pos, tile|
