@@ -66,5 +66,9 @@ module GameStore
         end
       )
     end
+
+    def pass_turn(player_name)
+      @game_record.turns.create!(player_name: player_name)
+    end
   end
 end

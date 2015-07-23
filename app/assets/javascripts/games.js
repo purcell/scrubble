@@ -55,6 +55,12 @@
         m.request({ method: "POST", url: ("/games/" + game.game_id + "/tile_swaps"),
                     data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("swapping tiles"));
+      },
+
+      passTurn: function() {
+        m.request({ method: "POST", url: ("/games/" + game.game_id + "/turn_passes"),
+                    config: XHR_CONFIG })
+          .then(updateGame, makeErrorHandler("passing the turn"));
       }
     };
 
@@ -194,7 +200,8 @@
                      m("button", { href: '#', onclick: game.submitPlacedTiles,
                                    disabled: !anyPlaced }, "Play tiles"),
                      m("button", { href: '#', onclick: game.swapTiles,
-                                   disabled: !anySelected }, "Swap tiles")
+                                   disabled: !anySelected }, "Swap tiles"),
+                     m("button", { href: '#', onclick: game.passTurn }, "Pass")
                    ]
                   )
                ]);

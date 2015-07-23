@@ -21,6 +21,11 @@
 * Remaining work
 ** DONE Persist a game beyond one turn
 ** DONE Support swapping out tiles
+** DONE Swap tiles in their original positions
+** DONE Passing turns
+** TODO Drag and drop of tiles
+   - http://www.html5rocks.com/en/tutorials/dnd/basics/
+   - https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_operations
 ** TODO Shuffle swapped tiles back into the bag randomly
 ** TODO Provide more detailed feedback when placements are invalid (spelling vs. legal positions)
 ** TODO Board shouldn't need to know about the dictionary

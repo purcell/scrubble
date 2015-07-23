@@ -34,4 +34,8 @@ class Game
     @trays[player_name].swap_tiles(bag, tiles)
     true
   end
+
+  def pass_turn(player_name)
+    true
+  end
 end
