@@ -4,30 +4,34 @@ module GameStore
   class OperationFailed < StandardError; end
 
   def self.load!(game_id)
+    # TODO: locking
     game_record = Storage::Game.find(game_id)
     Game.new(Bag.new(game_record.bag), ["steve"], STANDARD_DICTIONARY).tap do |game|
-      # TODO: locking
-      game_record.turns.each do |turn|
-        played_tiles = turn.tile_uses.each.with_object({}) do |tile_use, tiles|
-          tiles[Position.new(tile_use.x, tile_use.y)] = Tile.new(tile_use.letter, tile_use.blank?)
-        end
-        if played_tiles.any?
-          game.apply_placement(turn.player_name, played_tiles)
-        end
-        swapped_tiles = turn.tile_swaps.map do |tile|
-          Tile.new(tile.letter, tile.blank?)
-        end
-        if swapped_tiles.any?
-          game.swap_tiles(turn.player_name, swapped_tiles)
-        end
-      end
-      yield Multiplexer.new(game, GameOps.new(game_record)) if block_given?
+      replay_history(game, game_record)
+      yield ChainedActions.new(game, GameOps.new(game_record)) if block_given?
     end
   end
 
   private
 
-  class Multiplexer
+  def self.replay_history(game, game_record)
+    game_record.turns.each do |turn|
+      played_tiles = turn.tile_uses.each.with_object({}) do |tile_use, tiles|
+        tiles[Position.new(tile_use.x, tile_use.y)] = Tile.new(tile_use.letter, tile_use.blank?)
+      end
+      if played_tiles.any?
+        game.apply_placement(turn.player_name, played_tiles)
+      end
+      swapped_tiles = turn.tile_swaps.map do |tile|
+        Tile.new(tile.letter, tile.blank?)
+      end
+      if swapped_tiles.any?
+        game.swap_tiles(turn.player_name, swapped_tiles)
+      end
+    end
+  end
+
+  class ChainedActions
     def initialize(game, game_ops)
       @game = game
       @game_ops = game_ops
