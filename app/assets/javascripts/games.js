@@ -52,7 +52,7 @@
       },
 
       swapTiles: function() {
-        m.request({ method: "POST", url: ("/games/" + game.game_id + "/tileswaps"),
+        m.request({ method: "POST", url: ("/games/" + game.game_id + "/tile_swaps"),
                     data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("swapping tiles"));
       }
