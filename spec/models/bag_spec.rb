@@ -65,6 +65,13 @@ RSpec.describe Bag do
     end
   end
 
+  it "can be tested for equality" do
+    expect(Bag.new("ABC")).to eq(Bag.new("ABC"))
+    expect(Bag.new("A C")).to eq(Bag.new("A C"))
+    expect(Bag.new("ABC")).not_to eq(Bag.new("ABCD"))
+    expect(Bag.new("ABC")).not_to eq(Bag.new("CBA"))
+  end
+
   describe "drawing letters as tiles"  do
     it "allows drawing singly" do
       bag = Bag.new("A")

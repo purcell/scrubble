@@ -32,6 +32,10 @@ class Bag
     @letters.join
   end
 
+  def ==(other)
+    Bag === other && other.contents == contents
+  end
+
   private
 
   def full_bag_contents
