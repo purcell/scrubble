@@ -125,3 +125,26 @@ main {
 .tile.selected {
     background: #efefef;
 }
+
+.scores {
+    background-color: #eee;
+    width: 400px;
+    margin: 1em auto;
+    border-collapse: collapse;
+    th, td {
+        border: solid 1px #ddd;
+        padding: 0.25em;
+    }
+    thead {
+        background-color: #ddd;
+    }
+    .score.active {
+        background-color: #ffd;
+    }
+    .score.active.current {
+        background-color: #dfd;
+    }
+    .score.current {
+        font-weight: bold;
+    }
+}

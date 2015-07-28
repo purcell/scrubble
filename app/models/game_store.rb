@@ -6,7 +6,7 @@ module GameStore
   def self.load_session!(game_id, user_id)
     game_record = Storage::Game.find(game_id)
     game_record.with_lock do
-      player_record = game_record.players.find_by_user_id(user_id)
+      player_record = game_record.players.find_by_user_id!(user_id)
 
       player = Player.new(player_record.user.name)
       players = game_record.players.order(:order).map { |p| Player.new(p.user.name) }

@@ -24,8 +24,8 @@ class GameSession
     @game.trays[@player.name]
   end
 
-  def score
-    @game.scores[@player.name]
+  def scores
+    @game.players.map { |p| [p.name, @game.scores[p.name]] }
   end
 
   def play_tiles(played_tiles)

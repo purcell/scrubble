@@ -12,7 +12,7 @@ class GameSessionPresenter
       my_turn: @game_session.my_turn?,
       board: BoardPresenter.new(@game_session.board),
       tray: @game_session.tray.tiles.map { |tile| TilePresenter.new(tile) },
-      score: @game_session.score
+      scores: @game_session.scores
     }
   end
 end

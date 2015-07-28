@@ -141,7 +141,22 @@
                [
                  m.component(Board, game),
                  m.component(Tray, game),
-                 m(".score", ["Your score is ", m("strong", game.score)])
+                 m("table.scores",
+                   [
+                     m("thead", m("tr", [m("th", "Player"), m("th", "Score")])),
+                     m("tbody",
+                       game.scores.map(function(entry) {
+                         var name = entry[0];
+                         var score = entry[1];
+                         return m("tr.score",
+                                  {class: combineClasses([
+                                    name == game.turn_player_name && "active",
+                                    name == game.player_name && "current"
+                                  ])},
+                                  [m("td", name), m("td", score)]);
+                       }))
+                   ]
+                  )
                ]
               );
     }
@@ -205,8 +220,7 @@
                                      disabled: !anySelected }, "Swap tiles"),
                        m("button", { href: '#', onclick: game.passTurn }, "Pass")
                      ]
-                    ) :
-                 m("p", ["Waiting for ", game.turn_player_name])
+                    ) : null
                ]);
     }
   };
