@@ -25,19 +25,20 @@ module GameStore
 
   def self.replay_history(game, game_record)
     game_record.turns.each do |turn|
-      player = Player.new(turn.player.user.name)
       played_tiles = turn.tile_uses.each.with_object({}) do |tile_use, tiles|
         tiles[Position.new(tile_use.x, tile_use.y)] = Tile.new(tile_use.letter, tile_use.blank?)
       end
       swapped_tiles = turn.tile_swaps.map do |tile|
         Tile.new(tile.letter, tile.blank?)
       end
-      if played_tiles.any?
-        game.play_tiles(player, played_tiles)
-      elsif swapped_tiles.any?
-        game.swap_tiles(player, swapped_tiles)
-      else
-        game.pass_turn(player)
+      GameSession.new(game, Player.new(turn.player.user.name)).tap do |session|
+        if played_tiles.any?
+          session.play_tiles(played_tiles)
+        elsif swapped_tiles.any?
+          session.swap_tiles(swapped_tiles)
+        else
+          session.pass_turn
+        end
       end
     end
   end
