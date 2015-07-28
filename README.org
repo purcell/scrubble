@@ -23,6 +23,8 @@
 ** DONE Support swapping out tiles
 ** DONE Swap tiles in their original positions
 ** DONE Passing turns
+** TODO Close websockets on unload
+** TODO Browser notifications
 ** TODO Create game with a selected set of users
 ** TODO Detect end of game from empty bag or successive passes
 ** TODO End-game scoring

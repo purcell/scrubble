@@ -1,3 +1,5 @@
+require 'pub_sub'
+
 module GameStore
   STANDARD_DICTIONARY = Set.new(File.read(Rails.root + "db/ospd.txt").split("\n").map(&:upcase))
 
@@ -16,12 +18,21 @@ module GameStore
       GameSession.new(game, player).tap do |session|
         if block_given?
           yield ChainedActions.new(session, GameSessionOps.new(game_record, player_record))
+          PubSub.publish(pubsub_channel_name(game_id), true)
         end
       end
     end
   end
 
+  def self.on_update(game_id, &block)
+    PubSub.subscribe(pubsub_channel_name(game_id)) { block.call }
+  end
+
   private
+
+  def self.pubsub_channel_name(game_id)
+    "game-#{game_id}.updated"
+  end
 
   def self.replay_history(game, game_record)
     game_record.turns.each do |turn|

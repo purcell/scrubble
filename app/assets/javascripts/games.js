@@ -65,6 +65,14 @@
       }
     };
 
+    var socket = new WebSocket("ws://" + document.location.host + gamePath + "/watch");
+    socket.onmessage = function(event) {
+      console.log("Received websocket event " + JSON.stringify(event));
+      m.startComputation();
+      updateGame(JSON.parse(event.data));
+      m.endComputation();
+    };
+
     return updateGame(initial);
 
     function updateGame(data) {

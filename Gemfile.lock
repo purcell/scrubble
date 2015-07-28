@@ -66,6 +66,7 @@ GEM
     multi_json (1.11.2)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
+    puma (2.12.2)
     rack (1.6.4)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -133,6 +134,9 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.5)
     tilt (1.4.1)
+    tubesock (0.2.5)
+      rack (>= 1.5.0)
+      websocket (>= 1.1.0)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.1)
@@ -143,6 +147,7 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
+    websocket (1.2.2)
 
 PLATFORMS
   ruby
@@ -151,12 +156,14 @@ DEPENDENCIES
   byebug
   haml
   jbuilder (~> 2.0)
+  puma
   rails (= 4.2.3)
   rspec-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   spring
   sqlite3
+  tubesock
   uglifier (>= 1.3.0)
   web-console (~> 2.0)
 
