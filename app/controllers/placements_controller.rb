@@ -1,14 +1,13 @@
 class PlacementsController < ApplicationController
   def create
-    player_name = "steve"
+    user_id = 1
     begin
-      game = GameStore.load!(params[:game_id]) do |actions|
-        actions.play_tiles("steve",
-                           params[:played_tiles].each.with_object({}) do |p, played|
+      game_session = GameStore.load_session!(params[:game_id], user_id) do |actions|
+        actions.play_tiles(params[:played_tiles].each.with_object({}) do |p, played|
                              played[Position.new(p["x"], p["y"])] = Tile.new(p["letter"], p["blank"])
                            end)
       end
-      render json: GamePresenter.new(params[:game_id], game, player_name)
+      render json: GameSessionPresenter.new(params[:game_id], game_session)
     rescue GameStore::OperationFailed
       render status: 422, json: { errors: ["That placement is not valid"] }
     end

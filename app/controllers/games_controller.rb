@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
   def show
-    @game = GamePresenter.new(params[:id], GameStore.load!(params[:id]), "steve")
+    user_id = 1
+    @game = GameSessionPresenter.new(params[:id], GameStore.load_session!(params[:id], user_id))
   end
 end

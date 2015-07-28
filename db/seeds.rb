@@ -5,3 +5,18 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+
+
+Storage::Game.transaction do
+
+  users = %w(Steve Bob Alice).map do |name|
+    Storage::User.create!(name: name)
+  end
+
+  Storage::Game.create!(bag: "ZOMGKITTEHROFLLOLZGETGETASKIOIOZXCJLKJQOWIJLKJASDSAD",
+                        players: users.map.with_index do |u, i|
+                          Storage::Player.new(user: u, order: i)
+                        end)
+
+
+end

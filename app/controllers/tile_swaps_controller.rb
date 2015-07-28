@@ -1,13 +1,11 @@
 class TileSwapsController < ApplicationController
   def create
-    player_name = "steve"
-
+    user_id = 1
     begin
-      game = GameStore.load!(params[:game_id]) do |actions|
-        actions.swap_tiles(player_name,
-                           params[:tiles].map { |t| Tile.new(t["letter"], t["blank"]) })
+      game_session = GameStore.load_session!(params[:game_id], user_id) do |actions|
+        actions.swap_tiles(params[:tiles].map { |t| Tile.new(t["letter"], t["blank"]) })
       end
-      render json: GamePresenter.new(params[:game_id], game, "steve")
+      render json: GameSessionPresenter.new(params[:game_id], game_session)
     rescue GameStore::OperationFailed
       render status: 422, json: { errors: ["You cannot swap those tile(s)"] }
     end

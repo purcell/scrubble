@@ -11,11 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150723032439) do
+ActiveRecord::Schema.define(version: 20150724034504) do
 
   create_table "games", force: :cascade do |t|
     t.string "bag", null: false
   end
+
+  create_table "players", force: :cascade do |t|
+    t.integer "game_id", null: false
+    t.integer "user_id", null: false
+    t.integer "order",   null: false
+  end
+
+  add_index "players", ["game_id", "user_id"], name: "index_players_on_game_id_and_user_id", unique: true
 
   create_table "tile_swaps", force: :cascade do |t|
     t.integer "turn_id",                           null: false
@@ -32,8 +40,14 @@ ActiveRecord::Schema.define(version: 20150723032439) do
   end
 
   create_table "turns", force: :cascade do |t|
-    t.string  "player_name", null: false
-    t.integer "game_id",     null: false
+    t.integer "game_id",   null: false
+    t.integer "player_id"
   end
+
+  create_table "users", force: :cascade do |t|
+    t.string "name", null: false
+  end
+
+  add_index "users", ["name"], name: "index_users_on_name", unique: true
 
 end

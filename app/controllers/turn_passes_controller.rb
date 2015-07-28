@@ -1,12 +1,11 @@
 class TurnPassesController < ApplicationController
   def create
-    player_name = "steve"
-
+    user_id = 1
     begin
-      game = GameStore.load!(params[:game_id]) do |actions|
-        actions.pass_turn(player_name) 
+      game_session = GameStore.load_session!(params[:game_id], user_id) do |actions|
+        actions.pass_turn
       end
-      render json: GamePresenter.new(params[:game_id], game, "steve")
+      render json: GameSessionPresenter.new(params[:game_id], game_session)
     rescue GameStore::OperationFailed
       render status: 422, json: { errors: ["You cannot pass the turn"] }
     end
