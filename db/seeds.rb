@@ -13,7 +13,7 @@ Storage::Game.transaction do
     Storage::User.create!(name: name)
   end
 
-  Storage::Game.create!(bag: "ZOMGKITTEHROFLLOLZGETGETASKIOIOZXCJLKJQOWIJLKJASDSAD",
+  Storage::Game.create!(bag: Bag.new.contents,
                         players: users.map.with_index do |u, i|
                           Storage::Player.new(user: u, order: i)
                         end)

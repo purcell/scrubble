@@ -1,5 +1,5 @@
 module GameStore
-  STANDARD_DICTIONARY = ['ROFL', 'ZOMG', 'LOLZ', 'GET', 'KIT', 'HOT', 'ROOF']
+  STANDARD_DICTIONARY = Set.new(File.read(Rails.root + "db/ospd.txt").split("\n").map(&:upcase))
 
   class OperationFailed < StandardError; end
 
