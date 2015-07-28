@@ -12,6 +12,14 @@ class GameSession
     @player.name
   end
 
+  def turn_player_name
+    @game.current_player.name
+  end
+
+  def my_turn?
+    @game.current_player == @player
+  end
+
   def tray
     @game.trays[@player.name]
   end

@@ -26,7 +26,7 @@
   function makeGame(initial) {
     var game = {
       selectBoardSquare: function(square) {
-        if (!square.tile) {
+        if (game.my_turn && !square.tile) {
           maybePlaySelectedTile(square);
         }
       },
@@ -36,7 +36,8 @@
       },
 
       toggleTile: function(tile) {
-        return replaceTile(tile) || toggleSelectTrayTile(tile);
+        if (game.my_turn)
+          return replaceTile(tile) || toggleSelectTrayTile(tile);
       },
 
       submitPlacedTiles: function() {
@@ -193,17 +194,19 @@
                    game.tray.map(function(tile) {
                      return m(".tray-square", tile && m.component(Tile, tile, _.include(game.selectedTrayTiles, tile)));
                    })),
-                 m("p",
-                   [
-                     m("button", { href: '#', onclick: game.replaceTiles,
-                                   disabled: !anyPlaced }, "Clear play"),
-                     m("button", { href: '#', onclick: game.submitPlacedTiles,
-                                   disabled: !anyPlaced }, "Play tiles"),
-                     m("button", { href: '#', onclick: game.swapTiles,
-                                   disabled: !anySelected }, "Swap tiles"),
-                     m("button", { href: '#', onclick: game.passTurn }, "Pass")
-                   ]
-                  )
+                 game.my_turn ?
+                   m("p",
+                     [
+                       m("button", { href: '#', onclick: game.replaceTiles,
+                                     disabled: !anyPlaced }, "Clear play"),
+                       m("button", { href: '#', onclick: game.submitPlacedTiles,
+                                     disabled: !anyPlaced }, "Play tiles"),
+                       m("button", { href: '#', onclick: game.swapTiles,
+                                     disabled: !anySelected }, "Swap tiles"),
+                       m("button", { href: '#', onclick: game.passTurn }, "Pass")
+                     ]
+                    ) :
+                 m("p", ["Waiting for ", game.turn_player_name])
                ]);
     }
   };

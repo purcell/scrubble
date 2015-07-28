@@ -22,6 +22,7 @@ class Game
   end
 
   def play_tiles(player, played_tiles)
+    return false if player != current_player
     placement = Placement.new(@board)
     played_tiles.each do |pos, tile|
       placement.place(pos, tile)
@@ -38,6 +39,7 @@ class Game
   end
 
   def swap_tiles(player, tiles)
+    return false if player != current_player
     return false if bag.size < tiles.size
     @trays[player.name].swap_tiles(bag, tiles)
     end_turn
@@ -45,6 +47,7 @@ class Game
   end
 
   def pass_turn(player)
+    return false if player != current_player
     end_turn
     true
   end
