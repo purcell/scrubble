@@ -47,19 +47,19 @@
                      letter: sq.tile.letter, blank: sq.tile.blank };
           }
         })));
-        m.request({ method: "POST", url: game_path + "/placements",
+        m.request({ method: "POST", url: gamePath + "/placements",
                     data: { played_tiles: data }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("submitting placement"));
       },
 
       swapTiles: function() {
-        m.request({ method: "POST", url: game_path + "/tile_swaps",
+        m.request({ method: "POST", url: gamePath + "/tile_swaps",
                     data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("swapping tiles"));
       },
 
       passTurn: function() {
-        m.request({ method: "POST", url: game_path + "/turn_passes",
+        m.request({ method: "POST", url: gamePath + "/turn_passes",
                     config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("passing the turn"));
       }
