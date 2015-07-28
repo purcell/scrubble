@@ -23,6 +23,9 @@
 ** DONE Support swapping out tiles
 ** DONE Swap tiles in their original positions
 ** DONE Passing turns
+** TODO Create game with a selected set of users
+** TODO Detect end of game from empty bag or successive passes
+** TODO End-game scoring
 ** TODO Drag and drop of tiles
    - http://www.html5rocks.com/en/tutorials/dnd/basics/
    - https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_operations
