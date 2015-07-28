@@ -23,7 +23,7 @@
     return _.compact(classes).join(" ");
   }
 
-  function makeGame(initial) {
+  function makeGame(initial, gamePath) {
     var game = {
       selectBoardSquare: function(square) {
         if (game.my_turn && !square.tile) {
@@ -47,19 +47,19 @@
                      letter: sq.tile.letter, blank: sq.tile.blank };
           }
         })));
-        m.request({ method: "POST", url: "/games/" + game.game_id + "/placements",
+        m.request({ method: "POST", url: game_path + "/placements",
                     data: { played_tiles: data }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("submitting placement"));
       },
 
       swapTiles: function() {
-        m.request({ method: "POST", url: ("/games/" + game.game_id + "/tile_swaps"),
+        m.request({ method: "POST", url: game_path + "/tile_swaps",
                     data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("swapping tiles"));
       },
 
       passTurn: function() {
-        m.request({ method: "POST", url: ("/games/" + game.game_id + "/turn_passes"),
+        m.request({ method: "POST", url: game_path + "/turn_passes",
                     config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("passing the turn"));
       }
@@ -229,7 +229,8 @@
   // Set-up
   //////////////////////////////////////////////////////////////////////
 
-  var game = makeGame(JSON.parse(document.getElementById("game").dataset.game));
+  var game = makeGame(JSON.parse(document.getElementById("game").dataset.game),
+                      document.location.pathname);
 
   m.module(document.querySelector("#game"), m.component(Game, game));
 

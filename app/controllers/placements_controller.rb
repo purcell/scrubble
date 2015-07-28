@@ -6,7 +6,7 @@ class PlacementsController < ApplicationController
                              played[Position.new(p["x"], p["y"])] = Tile.new(p["letter"], p["blank"])
                            end)
       end
-      render json: GameSessionPresenter.new(params[:game_id], game_session)
+      render json: GameSessionPresenter.new(game_session)
     rescue GameStore::OperationFailed
       render status: 422, json: { errors: ["That placement is not valid"] }
     end
