@@ -1,5 +1,5 @@
 // global window
-(function(m, document, _){
+(function(m, document, _, window){
   "use strict";
 
   var CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]').attributes.content.value;
@@ -70,17 +70,15 @@
         m.request({ method: "POST", url: gamePath + "/turn_passes",
                     config: XHR_CONFIG })
           .then(updateGame, makeErrorHandler("passing the turn"));
-      }
-    };
+      },
 
-    var socket = new WebSocket("ws://" + document.location.host + gamePath + "/watch");
-    socket.onmessage = function(event) {
-      console.log("Received websocket event " + JSON.stringify(event));
-      m.startComputation();
-      withNotificationIfMyTurn(function() {
-        updateGame(JSON.parse(event.data));
-      });
-      m.endComputation();
+      onAsyncUpdate: function(data) {
+        m.startComputation();
+        withNotificationIfMyTurn(function() {
+          updateGame(data);
+        });
+        m.endComputation();
+      }
     };
 
     return updateGame(initial);
@@ -257,6 +255,13 @@
   var game = makeGame(JSON.parse(document.getElementById("game").dataset.game),
                       document.location.pathname);
 
+  var socket = new WebSocket("ws://" + document.location.host + document.location.pathname + "/watch");
+  socket.onmessage = function(event) {
+    console.log("Received websocket event " + JSON.stringify(event));
+    game.onAsyncUpdate(JSON.parse(event.data));
+  };
+  window.addEventListener("beforeunload", function() { socket.close(); });
+
   m.module(document.querySelector("#game"), m.component(Game, game));
 
-})(window.m, window.document, window._);
+})(window.m, window.document, window._, window);
