@@ -24,6 +24,7 @@
 ** DONE Swap tiles in their original positions
 ** DONE Passing turns
 ** TODO Close websockets on unload
+** TODO Avoid leaks in PubSub
 ** TODO Browser notifications
 ** TODO Create game with a selected set of users
 ** TODO Detect end of game from empty bag or successive passes
