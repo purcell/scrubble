@@ -49,27 +49,22 @@
       },
 
       submitPlacedTiles: function() {
-        var data = _.compact(_.map(allSquares(), (function(sq) {
-          if(_.include(game.placedTiles, sq.tile)) {
-            return { x: sq.position.x, y: sq.position.y,
-                     letter: sq.tile.letter, blank: sq.tile.blank };
-          }
-        })));
-        m.request({ method: "POST", url: gamePath + "/placements",
-                    data: { played_tiles: data }, config: XHR_CONFIG })
-          .then(updateGame, makeErrorHandler("submitting placement"));
+        submitAction("placements", {
+          played_tiles: _.compact(_.map(allSquares(), (function(sq) {
+            if(_.include(game.placedTiles, sq.tile)) {
+              return { x: sq.position.x, y: sq.position.y,
+                       letter: sq.tile.letter, blank: sq.tile.blank };
+            }
+          })))
+        }, "submitting placement");
       },
 
       swapTiles: function() {
-        m.request({ method: "POST", url: gamePath + "/tile_swaps",
-                    data: { tiles: game.selectedTrayTiles }, config: XHR_CONFIG })
-          .then(updateGame, makeErrorHandler("swapping tiles"));
+        submitAction("tile_swaps", { tiles: game.selectedTrayTiles }, "swapping tiles");
       },
 
       passTurn: function() {
-        m.request({ method: "POST", url: gamePath + "/turn_passes",
-                    config: XHR_CONFIG })
-          .then(updateGame, makeErrorHandler("passing the turn"));
+        submitAction("turn_passes", {}, "passing the turn");
       },
 
       onAsyncUpdate: function(data) {
@@ -82,6 +77,12 @@
     };
 
     return updateGame(initial);
+
+    function submitAction(relativePath, data, description) {
+      m.request({ method: "POST", url: gamePath + "/" + relativePath,
+                  data: data, config: XHR_CONFIG })
+        .then(updateGame, makeErrorHandler(description));
+    }
 
     function updateGame(data) {
       return _.extend(game, {
