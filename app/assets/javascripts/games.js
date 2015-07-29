@@ -8,6 +8,14 @@
     xhr.setRequestHeader('X-CSRF-Token', CSRF_TOKEN);
   };
 
+  function notify(message) {
+    if (("Notification" in window) && Notification.permission !== 'denied')
+      Notification.requestPermission(function() {
+        if (Notification.permission === "granted")
+          new Notification(message);
+      });
+  }
+
   function makeErrorHandler(actionDescription) {
     return function(response) {
       alert("Error " + actionDescription +
@@ -69,7 +77,9 @@
     socket.onmessage = function(event) {
       console.log("Received websocket event " + JSON.stringify(event));
       m.startComputation();
-      updateGame(JSON.parse(event.data));
+      withNotificationIfMyTurn(function() {
+        updateGame(JSON.parse(event.data));
+      });
       m.endComputation();
     };
 
@@ -80,6 +90,13 @@
         placedTiles: [],
         selectedTrayTiles: []
       }, data);
+    }
+
+    function withNotificationIfMyTurn(f) {
+      var previousPlayer = game.turn_player_name;
+      f();
+      if (game.turn_player_name != previousPlayer && game.my_turn)
+        notify("Scrubble game: it is your turn to play");
     }
 
     function maybePlaySelectedTile(square) {
