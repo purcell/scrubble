@@ -3,8 +3,8 @@ Rails.application.routes.draw do
     member do
       get :watch
     end
-    resource :placements
-    resource :tile_swaps
-    resource :turn_passes
+    resource :placements, only: :create
+    resource :tile_swaps, only: :create
+    resource :turn_passes, only: :create
   end
 end
