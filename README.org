@@ -26,10 +26,11 @@
 ** DONE Close websockets on unload
 ** DONE Browser notifications
 ** TODO Avoid leaks in PubSub
-** TODO Create game with a selected set of users
+** DONE Create game with a selected set of users
 ** TODO Detect end of game from empty bag or successive passes
 ** DONE Bingos (50 point bonus for 7-letter plays)
 ** TODO End-game scoring
+** TODO Cut out unnecessary routes
 ** TODO Drag and drop of tiles
    - http://www.html5rocks.com/en/tutorials/dnd/basics/
    - https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Drag_operations

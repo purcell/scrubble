@@ -24,6 +24,17 @@ module GameStore
     end
   end
 
+  def self.start_game!(user_id, other_user_ids)
+    raise OperationFailed unless ([user_id] + other_user_ids).uniq.size > 1
+    players = ([user_id] + other_user_ids).shuffle.map.with_index do |id, index|
+      Storage::Player.new(
+        user: Storage::User.find(id),
+        order: index
+      )
+    end
+    Storage::Game.create!(players: players, bag: Bag.new.contents).id
+  end
+
   def self.on_update(game_id, &block)
     PubSub.subscribe(pubsub_channel_name(game_id)) { block.call }
   end

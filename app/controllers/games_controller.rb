@@ -20,4 +20,12 @@ class GamesController < ApplicationController
       end
     end
   end
+
+  def new
+    @users = Storage::User.available_to_play_with(current_user_id!)
+  end
+
+  def create
+    redirect_to game_path(GameStore.start_game!(current_user_id!, params[:user_ids]))
+  end
 end

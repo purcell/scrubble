@@ -1,0 +1,14 @@
+%h1 Start a new game
+
+= form_tag games_path, method: :post do
+
+  %h3 Select other users
+
+  %ul
+    - @users.each do |user|
+      %li
+        %label
+          = check_box_tag("user_ids[]", user.id)
+          = user.name
+
+  = submit_tag("Start game")
