@@ -165,22 +165,29 @@
                [
                  m.component(Board, game),
                  m.component(Tray, game),
-                 m("table.scores",
-                   [
-                     m("thead", m("tr", [m("th", "Player"), m("th", "Score")])),
-                     m("tbody",
-                       game.scores.map(function(entry) {
-                         var name = entry[0];
-                         var score = entry[1];
-                         return m("tr.score",
-                                  {class: combineClasses([
-                                    name == game.turn_player_name && "active",
-                                    name == game.player_name && "current"
-                                  ])},
-                                  [m("td", name), m("td", score)]);
-                       }))
-                   ]
-                  )
+                 m.component(Controls, game),
+                 m.component(Scores, game)
+               ]
+              );
+    }
+  };
+
+  var Scores = {
+    view: function(ctrl, game) {
+      return m("table.scores",
+               [
+                 m("thead", m("tr", [m("th", "Player"), m("th", "Score")])),
+                 m("tbody",
+                   game.scores.map(function(entry) {
+                     var name = entry[0];
+                     var score = entry[1];
+                     return m("tr.score",
+                              {class: combineClasses([
+                                name == game.turn_player_name && "active",
+                                name == game.player_name && "current"
+                              ])},
+                              [m("td", name), m("td", score)]);
+                   }))
                ]
               );
     }
@@ -225,15 +232,21 @@
 
   var Tray = {
     view: function(ctrl, game) {
+      return m(".tray",
+               m(".tray-frame",
+                 game.tray.map(function(tile) {
+                   return m(".tray-square", tile && m.component(Tile, tile, _.include(game.selectedTrayTiles, tile)));
+                 }))
+              );
+    }
+  };
+
+  var Controls = {
+    view: function(ctrl, game) {
       var anyPlaced = (game.placedTiles.length !== 0);
       var anySelected = (game.selectedTrayTiles.length !== 0);
-      return m(".tray",
-               [
-                 m(".tray-frame",
-                   game.tray.map(function(tile) {
-                     return m(".tray-square", tile && m.component(Tile, tile, _.include(game.selectedTrayTiles, tile)));
-                   })),
-                 game.my_turn ?
+      return m(".controls",
+              game.my_turn ?
                    m("p",
                      [
                        m("button", { href: '#', onclick: game.replaceTiles,
@@ -244,8 +257,7 @@
                                      disabled: !anySelected }, "Swap tiles"),
                        m("button", { href: '#', onclick: game.passTurn }, "Pass")
                      ]
-                    ) : null
-               ]);
+                    ) : null)
     }
   };
 
