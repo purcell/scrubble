@@ -265,16 +265,24 @@
   // Set-up
   //////////////////////////////////////////////////////////////////////
 
-  var game = makeGame(JSON.parse(document.getElementById("game").dataset.game),
-                      document.location.pathname);
+  function setup(element) {
+    var game = makeGame(JSON.parse(element.dataset.game),
+                        document.location.pathname);
 
-  var socket = new WebSocket("ws://" + document.location.host + document.location.pathname + "/watch");
-  socket.onmessage = function(event) {
-    console.log("Received websocket event " + JSON.stringify(event));
-    game.onAsyncUpdate(JSON.parse(event.data));
-  };
-  window.addEventListener("beforeunload", function() { socket.close(); });
+    var socket = new WebSocket("ws://" + document.location.host + document.location.pathname + "/watch");
+    socket.onmessage = function(event) {
+      console.log("Received websocket event " + JSON.stringify(event));
+      game.onAsyncUpdate(JSON.parse(event.data));
+    };
+    window.addEventListener("beforeunload", function() { socket.close(); });
 
-  m.module(document.querySelector("#game"), m.component(Game, game));
+    m.module(element, m.component(Game, game));
+  }
+
+
+  var gameElement = document.querySelector("#game");
+  if (gameElement) {
+    setup(gameElement);
+  }
 
 })(window.m, window.document, window._, window);
