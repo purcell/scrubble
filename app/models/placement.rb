@@ -22,7 +22,8 @@ class Placement
   end
 
   def score
-    resulting_words.map(&method(:score_word)).inject(0, &:+)
+    bonus = @tiles.size == 7 ? 50 : 0
+    resulting_words.map(&method(:score_word)).inject(0, &:+) + bonus
   end
 
   def new_board

@@ -141,7 +141,7 @@ RSpec.describe Placement do
       end
     end
 
-    context "with letters on multiple multiplier squares" do
+    context "with word and letter multiplier squares" do
       it "multiplies letters then words" do
         place(Position.new(1, 1), "B")
         place(Position.new(2, 1), "O")
@@ -149,17 +149,39 @@ RSpec.describe Placement do
         place(Position.new(4, 1), "T")
         expect(placement.score).to eq (3 * (3 + 1 + 1 + 1 * 2))
       end
+    end
+
+    context "with multiple word multiplier squares" do
+      before do
+        board_has(Position.new(5, 8), "R")
+        board_has(Position.new(6, 8), "I")
+        board_has(Position.new(7, 8), "D")
+      end
 
       it "compounds word multipliers" do
         place(Position.new(1, 8), "B")
         place(Position.new(2, 8), "O")
         place(Position.new(3, 8), "A")
         place(Position.new(4, 8), "T")
+        place(Position.new(8, 8), "E")
+        expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1 + 1 + 2 + 1))
+      end
+    end
+
+    context "when placing seven tiles" do
+      before do
+        board_has(Position.new(7, 8), "D")
+      end
+
+      it "awards a 50 point bonus" do
+        place(Position.new(1, 8), "B")
+        place(Position.new(2, 8), "O")
+        place(Position.new(3, 8), "A")
+        place(Position.new(4, 8), "T")
         place(Position.new(5, 8), "R")
         place(Position.new(6, 8), "I")
-        place(Position.new(7, 8), "D")
         place(Position.new(8, 8), "E")
-        expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1  + 1 + 2 + 1))
+        expect(placement.score).to eq (3 * 2 * (3 + 1 + (1 * 2) + 1 + 1 + 1 + 2 + 1) + 50)
       end
     end
 
