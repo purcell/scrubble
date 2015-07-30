@@ -2,12 +2,12 @@ class GamesController < ApplicationController
   include Tubesock::Hijack
 
   def show
-    @game = GameSessionPresenter.new(GameStore.load_session!(params[:id], session[:user_id]))
+    @game = GameSessionPresenter.new(GameStore.load_session!(params[:id], current_user_id!))
   end
 
   def watch
     game_id = params[:id]
-    user_id = session[:user_id]
+    user_id = current_user_id!
     hijack do |tubesock|
       logger.debug("Opening websocket for #{game_id}")
       subscription = GameStore.on_update(game_id) do

@@ -12,4 +12,8 @@ class ApplicationController < ActionController::Base
       session[:user_id] = params[:user_id]
     end
   end
+
+  def current_user_id!
+    session[:user_id] || raise("Unauthorised")
+  end
 end
