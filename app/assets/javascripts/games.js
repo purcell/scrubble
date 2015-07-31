@@ -194,7 +194,7 @@
   };
 
   var Tile = {
-    view: function(ctrl, tile, selected, showIfBlank)  {
+    view: function(ctrl, game, tile, selected, showIfBlank)  {
       return m(".tile",
                {
                  class: combineClasses([
@@ -224,7 +224,7 @@
                                        ]),
                                        onclick: _.wrap(square, game.selectBoardSquare)
                                      },
-                                     (square.tile && m.component(Tile, square.tile, false, true)));
+                                     (square.tile && m.component(Tile, game, square.tile, false, true)));
                           }));
                }));
     }
@@ -235,7 +235,7 @@
       return m(".tray",
                m(".tray-frame",
                  game.tray.map(function(tile) {
-                   return m(".tray-square", tile && m.component(Tile, tile, _.include(game.selectedTrayTiles, tile)));
+                   return m(".tray-square", tile && m.component(Tile, game, tile, _.include(game.selectedTrayTiles, tile)));
                  }))
               );
     }
