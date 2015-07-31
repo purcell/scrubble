@@ -1,4 +1,4 @@
-require 'thread'
+require 'thread' # <- a reliable sign of ensuing flaky hackery
 
 module PubSub
 
