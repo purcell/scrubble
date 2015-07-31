@@ -158,8 +158,6 @@
   //////////////////////////////////////////////////////////////////////
 
   var Game = {
-    controller: function(game) {
-    },
     view: function(ctrl, game) {
       return m(".game",
                [
