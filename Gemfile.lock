@@ -123,6 +123,7 @@ GEM
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    simple-random (1.0.1)
     spring (1.3.6)
     sprockets (3.2.0)
       rack (~> 1.0)
@@ -161,6 +162,7 @@ DEPENDENCIES
   rspec-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
+  simple-random
   spring
   sqlite3
   tubesock

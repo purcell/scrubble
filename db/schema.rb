@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150724034504) do
+ActiveRecord::Schema.define(version: 20150803015039) do
 
   create_table "games", force: :cascade do |t|
-    t.string "bag", null: false
+    t.string  "bag",                     null: false
+    t.integer "random_seed", default: 0, null: false
   end
 
   create_table "players", force: :cascade do |t|

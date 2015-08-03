@@ -19,7 +19,7 @@ RSpec.describe Tray do
   context "when replacing tiles" do
     let(:tiles) { [Tile.new("A"), Tile.new("B"), Tile.new("B", true), Tile.new("C")] }
     let(:tray) { Tray.new(tiles) }
-    let(:bag) { Bag.new("XY") }
+    let(:bag) { Bag.new(contents: "XY") }
 
     it "removes matching tiles" do
       tray.replace_tiles(bag, [Tile.new("B"), Tile.new("C")])
@@ -40,7 +40,7 @@ RSpec.describe Tray do
     let(:tray) { Tray.new(tiles) }
 
     context "when the bag is nearly empty" do
-      let(:bag) { Bag.new("LMNOPQ") }
+      let(:bag) { Bag.new(contents: "LMNOPQ") }
 
       it "refuses to swap even zero tiles" do
         expect(tray.swap_tiles(bag, [])).to eq(false)
@@ -56,7 +56,7 @@ RSpec.describe Tray do
     end
 
     context "when there are plenty of tiles" do
-      let(:bag) { Bag.new("LMNOPQR") }
+      let(:bag) { Bag.new(contents: "LMNOPQR") }
 
       it "does nothing if there are no tiles to swap" do
         expect { tray.swap_tiles(bag, []) }.to_not change { tray.tiles }

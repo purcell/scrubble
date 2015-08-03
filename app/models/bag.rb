@@ -1,8 +1,12 @@
+require 'simple-random'
+
 class Bag
 
-  def initialize(letters=full_bag_contents)
-    raise ArgumentError unless letters =~ /\A[A-Z ]*\z/
-    @letters = letters.chars
+  def initialize(contents: full_bag_contents, random_seed: nil)
+    raise ArgumentError unless contents =~ /\A[A-Z ]*\z/
+    @letters = contents.chars
+    @randomgen = SimpleRandom.new
+    @randomgen.set_seed(random_seed) if random_seed
   end
 
   def draw
@@ -22,6 +26,7 @@ class Bag
 
   def replace_tiles(tiles)
     @letters += tiles.map { |t| t.blank? ? " " : t.letter }
+    shuffle!
   end
 
   def empty?
@@ -41,6 +46,14 @@ class Bag
   end
 
   private
+
+  def shuffle!
+    n = @letters.size
+    0.upto(n-2).each do |i|
+      j = @randomgen.uniform(i, n).floor
+      @letters[j], @letters[i] = @letters[i], @letters[j]
+    end
+  end
 
   def full_bag_contents
     FREQUENCIES.map do |char, freq|

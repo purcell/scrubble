@@ -12,7 +12,7 @@ module GameStore
 
       player = Player.new(player_record.user.name)
       players = game_record.players.order(:order).map { |p| Player.new(p.user.name) }
-      game = Game.new(Bag.new(game_record.bag), players, STANDARD_DICTIONARY)
+      game = Game.new(Bag.new(contents: game_record.bag, random_seed: game_record.random_seed), players, STANDARD_DICTIONARY)
 
       replay_history(game, game_record)
       GameSession.new(game, player).tap do |session|
@@ -32,7 +32,9 @@ module GameStore
         order: index
       )
     end
-    Storage::Game.create!(players: players, bag: Bag.new.contents).id
+    random_seed = Time.now.to_i
+    Storage::Game.create!(players: players, random_seed: random_seed,
+                          bag: Bag.new(random_seed: random_seed).contents).id
   end
 
   def self.on_update(game_id, &block)

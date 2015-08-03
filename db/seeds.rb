@@ -13,7 +13,9 @@ Storage::Game.transaction do
     Storage::User.create!(name: name)
   end
 
-  Storage::Game.create!(bag: Bag.new.contents,
+  random_seed = Time.now.to_i
+  Storage::Game.create!(bag: Bag.new(random_seed: random_seed).contents(),
+                        random_seed: random_seed,
                         players: users.map.with_index do |u, i|
                           Storage::Player.new(user: u, order: i)
                         end)

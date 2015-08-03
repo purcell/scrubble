@@ -52,7 +52,7 @@ RSpec.describe Bag do
 
   it "can be initialized with contents" do
     contents = "ABCDEFG"
-    bag = Bag.new(contents)
+    bag = Bag.new(contents: contents)
     contents.each_char do |letter|
       expect(bag.draw).to eq(letter)
     end
@@ -61,40 +61,48 @@ RSpec.describe Bag do
 
   it "complains if contents are not legal" do
     ["a" "1" "ABC^D"].each do |bad_content|
-      expect { Bag.new(bad_content) }.to raise_error(ArgumentError)
+      expect { Bag.new(contents: bad_content) }.to raise_error(ArgumentError)
     end
   end
 
   it "can be tested for equality" do
-    expect(Bag.new("ABC")).to eq(Bag.new("ABC"))
-    expect(Bag.new("A C")).to eq(Bag.new("A C"))
-    expect(Bag.new("ABC")).not_to eq(Bag.new("ABCD"))
-    expect(Bag.new("ABC")).not_to eq(Bag.new("CBA"))
+    expect(Bag.new(contents: "ABC")).to eq(Bag.new(contents: "ABC"))
+    expect(Bag.new(contents: "A C")).to eq(Bag.new(contents: "A C"))
+    expect(Bag.new(contents: "ABC")).not_to eq(Bag.new(contents: "ABCD"))
+    expect(Bag.new(contents: "ABC")).not_to eq(Bag.new(contents: "CBA"))
   end
 
   describe "drawing letters as tiles"  do
     it "allows drawing singly" do
-      bag = Bag.new("A")
+      bag = Bag.new(contents: "A")
       expect(bag.draw_tile).to eq(Tile.new("A"))
       expect(bag).to be_empty
     end
 
     it "allows drawing blanks singly" do
-      expect(Bag.new(" ").draw_tile).to eq(Tile.new(nil, true))
+      expect(Bag.new(contents: " ").draw_tile).to eq(Tile.new(nil, true))
     end
 
     it "handles drawing when empty" do
-      expect(Bag.new("").draw_tile).to be_nil
+      expect(Bag.new(contents: "").draw_tile).to be_nil
     end
 
     context "when drawing multiple tiles" do
       it "returns a subset" do
-        expect(Bag.new("ABC").draw_tiles(2)).to eq([Tile.new("A"), Tile.new("B")])
+        expect(Bag.new(contents: "ABC").draw_tiles(2)).to eq([Tile.new("A"), Tile.new("B")])
       end
 
       it "can partially fulfill the draw" do
-        expect(Bag.new("A").draw_tiles(2)).to eq([Tile.new("A")])
+        expect(Bag.new(contents: "A").draw_tiles(2)).to eq([Tile.new("A")])
       end
+    end
+  end
+
+  context "when replacing tiles" do
+    subject(:bag) { Bag.new(contents: "ABC", random_seed: 12345) }
+    it "shuffles the tiles back into the bag" do
+      bag.replace_tiles([Tile.new("D"), Tile.new(nil, true), Tile.new("E")])
+      expect(bag.contents).to eq("EBCDA ")
     end
   end
 end
