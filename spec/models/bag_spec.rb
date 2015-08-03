@@ -99,10 +99,14 @@ RSpec.describe Bag do
   end
 
   context "when replacing tiles" do
-    subject(:bag) { Bag.new(contents: "ABC", random_seed: 12345) }
     it "shuffles the tiles back into the bag" do
-      bag.replace_tiles([Tile.new("D"), Tile.new(nil, true), Tile.new("E")])
-      expect(bag.contents).to eq("EBCDA ")
+      bag1 = Bag.new(contents: "ABC", random_seed: 12345)
+      bag2 = Bag.new(contents: "ABC", random_seed: 1)
+      [bag1, bag2].each do |bag|
+        bag.replace_tiles([Tile.new("D"), Tile.new(nil, true), Tile.new("E")])
+      end
+      expect(bag1.contents).to eq("EBCDA ")
+      expect(bag2.contents).to eq("DC EBA")
     end
   end
 end
